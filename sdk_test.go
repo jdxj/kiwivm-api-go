@@ -52,3 +52,19 @@ func TestClient_Restart(t *testing.T) {
 	}
 	fmt.Printf("%+v\n", rsp)
 }
+
+func TestClient_GetLiveServiceInfo(t *testing.T) {
+	rsp, err := cc.GetLiveServiceInfo()
+	if err != nil {
+		t.Fatalf("%s\n", err)
+	}
+	fmt.Printf("%+v\n", rsp)
+}
+
+func TestClient_GetAvailableOS(t *testing.T) {
+	rsp, err := cc.GetAvailableOS()
+	if err != nil {
+		t.Fatalf("%s\n", err)
+	}
+	fmt.Printf("%+v\n", rsp)
+}
