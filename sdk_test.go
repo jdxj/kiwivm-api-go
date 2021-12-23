@@ -6,15 +6,8 @@ import (
 )
 
 var (
-	veID   = ""
-	apiKey = ""
-
-	cc = newClient()
+	cc = NewClient(veID, apiKey)
 )
-
-func newClient() *Client {
-	return NewClient(veID, apiKey)
-}
 
 func TestEncode(t *testing.T) {
 	req := &auth{
