@@ -17,55 +17,79 @@ const (
 )
 
 func Encode(i interface{}) string {
-	if i == nil {
-		return ""
-	}
-	rt := reflect.TypeOf(i)
-	if rt.Kind() != reflect.Ptr || rt.Elem().Kind() != reflect.Struct {
-		panic("not point to struct of pointer")
-	}
-
-	var (
-		v  = url.Values{}
-		rv = reflect.ValueOf(i).Elem()
-	)
-	for i := 0; i < rv.NumField(); i++ {
-		key := rv.Type().Field(i).Tag.Get("json")
-		if key == "" {
-			panic("json tag not found")
-		}
-		value := fmt.Sprintf("%v", rv.Field(i))
-		v.Add(key, value)
-	}
+	v := url.Values{}
+	encode(i, v)
 	return v.Encode()
 }
 
-func NewClient(veID, apiKey string) *Client {
+func encode(d interface{}, v url.Values) {
+	if d == nil {
+		return
+	}
+
+	rt := reflect.TypeOf(d)
+	if rt.Kind() != reflect.Ptr || rt.Elem().Kind() != reflect.Struct {
+		return
+	}
+
+	rv := reflect.ValueOf(d).Elem()
+	for i := 0; i < rv.NumField(); i++ {
+		frt := rv.Field(i).Type()
+		if reflect.Int <= frt.Kind() && frt.Kind() <= reflect.Float64 ||
+			frt.Kind() == reflect.String {
+
+			key := rv.Type().Field(i).Tag.Get("json")
+			if key == "" {
+				fieldName := rv.Type().Field(i).Name
+				err := fmt.Sprintf("json tag not found: %s", fieldName)
+				panic(err)
+			}
+			v.Add(key, rv.Field(i).String())
+		} else {
+			encode(rv.Field(i).Interface(), v)
+		}
+	}
+}
+
+type Option struct {
+	debug bool
+}
+
+type OptFunc func(*Option)
+
+func WithDebug(debug bool) OptFunc {
+	return func(o *Option) {
+		o.debug = debug
+	}
+}
+
+func NewClient(veID, apiKey string, optFunc ...OptFunc) *Client {
+	o := new(Option)
+	for _, f := range optFunc {
+		f(o)
+	}
+
 	c := &Client{
-		veID:   veID,
-		apiKey: apiKey,
+		auth: &Auth{
+			VeID:   veID,
+			APIKey: apiKey,
+		},
+		option: o,
 		hc:     &http.Client{},
 	}
 	return c
 }
 
 type Client struct {
-	veID   string
-	apiKey string
+	auth   *Auth
+	option *Option
 
 	hc *http.Client
 }
 
-type auth struct {
+type Auth struct {
 	VeID   string `json:"veid"`
 	APIKey string `json:"api_key"`
-}
-
-func (c *Client) getAuth() *auth {
-	return &auth{
-		VeID:   c.veID,
-		APIKey: c.apiKey,
-	}
 }
 
 func (c *Client) do(call string, req, rsp interface{}) error {
@@ -73,6 +97,11 @@ func (c *Client) do(call string, req, rsp interface{}) error {
 	defer cancel()
 
 	api := host + version + call + "?" + Encode(req)
+
+	if c.option.debug {
+		fmt.Printf("debug api: %s\n", api)
+	}
+
 	hReq, _ := http.NewRequestWithContext(ctx, http.MethodGet, api, nil)
 	hRsp, err := c.hc.Do(hReq)
 	if err != nil {
@@ -80,15 +109,15 @@ func (c *Client) do(call string, req, rsp interface{}) error {
 	}
 	defer hRsp.Body.Close()
 
-	//decoder := json.NewDecoder(hRsp.Body)
-	//return decoder.Decode(rsp)
-
-	// debug
 	d, err := ioutil.ReadAll(hRsp.Body)
 	if err != nil {
 		return err
 	}
-	fmt.Printf("debug body: %s\n", d)
+
+	if c.option.debug {
+		fmt.Printf("debug body: %s\n", d)
+	}
+
 	return json.Unmarshal(d, rsp)
 }
 
@@ -99,7 +128,7 @@ type StartRsp struct {
 
 func (c *Client) Start() (*StartRsp, error) {
 	call := "/start"
-	req := c.getAuth()
+	req := c.auth
 	rsp := &StartRsp{}
 	return rsp, c.do(call, req, rsp)
 }
@@ -110,7 +139,7 @@ type StopRsp struct {
 
 func (c *Client) Stop() (*StopRsp, error) {
 	call := "/stop"
-	req := c.getAuth()
+	req := c.auth
 	rsp := &StopRsp{}
 	return rsp, c.do(call, req, rsp)
 }
@@ -121,7 +150,7 @@ type RestartRsp struct {
 
 func (c *Client) Restart() (*RestartRsp, error) {
 	call := "/restart"
-	req := c.getAuth()
+	req := c.auth
 	rsp := &RestartRsp{}
 	return rsp, c.do(call, req, rsp)
 }
@@ -129,133 +158,43 @@ func (c *Client) Restart() (*RestartRsp, error) {
 type KillRsp struct {
 }
 
-// todo: 测试
+// todo: test
 func (c *Client) Kill() (*KillRsp, error) {
 	call := "/kill"
-	req := c.getAuth()
+	req := c.auth
 	rsp := &KillRsp{}
 	return rsp, c.do(call, req, rsp)
 }
 
-type GetServiceInfoRsp struct {
-	VmType                          string                     `json:"vm_type"`
-	Hostname                        string                     `json:"hostname"`
-	NodeIp                          string                     `json:"node_ip"`
-	NodeAlias                       string                     `json:"node_alias"`
-	NodeLocation                    string                     `json:"node_location"`
-	NodeLocationId                  string                     `json:"node_location_id"`
-	NodeDatacenter                  string                     `json:"node_datacenter"`
-	LocationIpv6Ready               bool                       `json:"location_ipv6_ready"`
-	Plan                            string                     `json:"plan"`
-	PlanMonthlyData                 int64                      `json:"plan_monthly_data"`
-	MonthlyDataMultiplier           int                        `json:"monthly_data_multiplier"`
-	PlanDisk                        int64                      `json:"plan_disk"`
-	PlanRam                         int                        `json:"plan_ram"`
-	PlanSwap                        int                        `json:"plan_swap"`
-	PlanMaxIpv6S                    int                        `json:"plan_max_ipv6s"`
-	Os                              string                     `json:"os"`
-	Email                           string                     `json:"email"`
-	DataCounter                     int64                      `json:"data_counter"`
-	DataNextReset                   int                        `json:"data_next_reset"`
-	IpAddresses                     []string                   `json:"ip_addresses"`
-	PrivateIpAddresses              []string                   `json:"private_ip_addresses"`
-	IpNullRoutes                    json.RawMessage            `json:"ip_nullroutes"`
-	Iso1                            json.RawMessage            `json:"iso1"`
-	Iso2                            json.RawMessage            `json:"iso2"`
-	AvailableISOs                   []string                   `json:"available_isos"`
-	PlanPrivateNetworkAvailable     bool                       `json:"plan_private_network_available"`
-	LocationPrivateNetworkAvailable bool                       `json:"location_private_network_available"`
-	RDNSAPIAvailable                bool                       `json:"rdns_api_available"`
-	Ptr                             map[string]json.RawMessage `json:"ptr"`
-	Suspended                       bool                       `json:"suspended"`
-	PolicyViolation                 bool                       `json:"policy_violation"`
-	SuspensionCount                 json.RawMessage            `json:"suspension_count"`
-	TotalAbusePoints                int                        `json:"total_abuse_points"`
-	MaxAbusePoints                  int                        `json:"max_abuse_points"`
-	Error                           int                        `json:"error"`
+type ReinstallOSReq struct {
+	*Auth
+	OS string `json:"os"`
 }
 
-func (c *Client) GetServiceInfo() (*GetServiceInfoRsp, error) {
-	call := "/getServiceInfo"
-	req := c.getAuth()
-	rsp := &GetServiceInfoRsp{}
+type ReinstallOSRsp struct {
+}
+
+// todo: test
+func (c *Client) ReinstallOS(req *ReinstallOSReq) (*ReinstallOSRsp, error) {
+	call := "/reinstallOS"
+	req.Auth = c.auth
+	rsp := &ReinstallOSRsp{}
 	return rsp, c.do(call, req, rsp)
 }
 
-type GetLiveServiceInfoRsp struct {
-	VmType                          string                     `json:"vm_type"`
-	VeStatus                        string                     `json:"ve_status"`
-	VeMac1                          string                     `json:"ve_mac1"`
-	VeUsedDiskSpaceB                int64                      `json:"ve_used_disk_space_b"`
-	VeDiskQuotaGb                   string                     `json:"ve_disk_quota_gb"`
-	IsCpuThrottled                  string                     `json:"is_cpu_throttled"`
-	IsDiskThrottled                 string                     `json:"is_disk_throttled"`
-	SshPort                         int                        `json:"ssh_port"`
-	LiveHostname                    string                     `json:"live_hostname"`
-	LoadAverage                     string                     `json:"load_average"`
-	MemAvailableKb                  int                        `json:"mem_available_kb"`
-	SwapTotalKb                     int                        `json:"swap_total_kb"`
-	SwapAvailableKb                 int                        `json:"swap_available_kb"`
-	ScreenDumpPngBase64             string                     `json:"screendump_png_base64"`
-	Hostname                        string                     `json:"hostname"`
-	NodeIp                          string                     `json:"node_ip"`
-	NodeAlias                       string                     `json:"node_alias"`
-	NodeLocation                    string                     `json:"node_location"`
-	NodeLocationId                  string                     `json:"node_location_id"`
-	NodeDatacenter                  string                     `json:"node_datacenter"`
-	LocationIpv6Ready               bool                       `json:"location_ipv6_ready"`
-	Plan                            string                     `json:"plan"`
-	PlanMonthlyData                 int64                      `json:"plan_monthly_data"`
-	MonthlyDataMultiplier           int                        `json:"monthly_data_multiplier"`
-	PlanDisk                        int64                      `json:"plan_disk"`
-	PlanRam                         int                        `json:"plan_ram"`
-	PlanSwap                        int                        `json:"plan_swap"`
-	PlanMaxIpv6S                    int                        `json:"plan_max_ipv6s"`
-	Os                              string                     `json:"os"`
-	Email                           string                     `json:"email"`
-	DataCounter                     int64                      `json:"data_counter"`
-	DataNextReset                   int                        `json:"data_next_reset"`
-	IpAddresses                     []string                   `json:"ip_addresses"`
-	PrivateIpAddresses              []string                   `json:"private_ip_addresses"`
-	IpNullRoutes                    json.RawMessage            `json:"ip_nullroutes"`
-	Iso1                            json.RawMessage            `json:"iso1"`
-	Iso2                            json.RawMessage            `json:"iso2"`
-	AvailableISOs                   []string                   `json:"available_isos"`
-	PlanPrivateNetworkAvailable     bool                       `json:"plan_private_network_available"`
-	LocationPrivateNetworkAvailable bool                       `json:"location_private_network_available"`
-	RDNSAPIAvailable                bool                       `json:"rdns_api_available"`
-	Ptr                             map[string]json.RawMessage `json:"ptr"`
-	Suspended                       bool                       `json:"suspended"`
-	PolicyViolation                 bool                       `json:"policy_violation"`
-	SuspensionCount                 json.RawMessage            `json:"suspension_count"`
-	TotalAbusePoints                int                        `json:"total_abuse_points"`
-	MaxAbusePoints                  int                        `json:"max_abuse_points"`
-	Error                           int                        `json:"error"`
-	VeID                            int                        `json:"veid"`
+type ResetRootPasswordRsp struct {
 }
 
-func (c *Client) GetLiveServiceInfo() (*GetLiveServiceInfoRsp, error) {
-	call := "/getLiveServiceInfo"
-	req := c.getAuth()
-	rsp := &GetLiveServiceInfoRsp{}
-	return rsp, c.do(call, req, rsp)
-}
-
-type GetAvailableOSRsp struct {
-	Error     int      `json:"error"`
-	Installed string   `json:"installed"`
-	Templates []string `json:"templates"`
-}
-
-func (c *Client) GetAvailableOS() (*GetAvailableOSRsp, error) {
-	call := "/getAvailableOS"
-	req := c.getAuth()
-	rsp := &GetAvailableOSRsp{}
+// todo: test
+func (c *Client) ResetRootPassword() (*ResetRootPasswordRsp, error) {
+	call := "/resetRootPassword"
+	req := c.auth
+	rsp := &ResetRootPasswordRsp{}
 	return rsp, c.do(call, req, rsp)
 }
 
 type CreateSnapshotReq struct {
-	auth
+	*Auth
 }
 
 type CreateSnapshotRsp struct {
