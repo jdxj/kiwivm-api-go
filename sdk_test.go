@@ -161,7 +161,7 @@ func TestClient_ShellScriptExec(t *testing.T) {
 
 func TestClient_SnapshotCreate(t *testing.T) {
 	rsp, err := cc.SnapshotCreate(&SnapshotCreateReq{
-		Description: "test",
+		Description: "test sticky",
 	})
 	if err != nil {
 		t.Fatalf("%s\n", err)
@@ -189,9 +189,45 @@ func TestClient_SnapshotDelete(t *testing.T) {
 
 func TestClient_SnapshotToggleSticky(t *testing.T) {
 	rsp, err := cc.SnapshotToggleSticky(&SnapshotToggleStickyReq{
-		Snapshot: "snapshot-1670298-1640598255-2021-12-27-44b654ec70ebb997f3019903743f7d30363f2f51.tar.gz",
-		Sticky:   SetSticky,
+		Snapshot: "snapshot-1670298-1640655921-2021-12-27-3af2c5902ed7f23ae32e6f1ff4cd71aa50e5919d.tar.gz",
+		Sticky:   RemoveSticky,
 	})
+	if err != nil {
+		t.Fatalf("%s\n", err)
+	}
+	fmt.Printf("%+v\n", rsp)
+}
+
+func TestClient_SnapshotExport(t *testing.T) {
+	rsp, err := cc.SnapshotExport(&SnapshotExportReq{
+		Snapshot: "snapshot-1670298-1640655921-2021-12-27-3af2c5902ed7f23ae32e6f1ff4cd71aa50e5919d.tar.gz",
+	})
+	if err != nil {
+		t.Fatalf("%s\n", err)
+	}
+	fmt.Printf("%+v\n", rsp)
+}
+
+func TestClient_BackupList(t *testing.T) {
+	rsp, err := cc.BackupList()
+	if err != nil {
+		t.Fatalf("%s\n", err)
+	}
+	fmt.Printf("%+v\n", rsp)
+}
+
+func TestClient_BackupCopyToSnapshot(t *testing.T) {
+	rsp, err := cc.BackupCopyToSnapshot(&BackupCopyToSnapshotReq{
+		BackupToken: "e6dfb352f377912048bea6780d196981c1570768",
+	})
+	if err != nil {
+		t.Fatalf("%s\n", err)
+	}
+	fmt.Printf("%+v\n", rsp)
+}
+
+func TestClient_MigrateGetLocations(t *testing.T) {
+	rsp, err := cc.MigrateGetLocations()
 	if err != nil {
 		t.Fatalf("%s\n", err)
 	}

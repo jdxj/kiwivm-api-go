@@ -1,5 +1,9 @@
 package kiwivm_sdk_go
 
+import (
+	"encoding/json"
+)
+
 type SnapshotCreateReq struct {
 	*Auth
 	Description string `json:"description"`
@@ -93,14 +97,55 @@ type SnapshotToggleStickyReq struct {
 }
 
 type SnapshotToggleStickyRsp struct {
+	Error               int             `json:"error"`
+	Message             string          `json:"message"`
+	AdditionalErrorCode json.RawMessage `json:"additionalErrorCode"`
+	AdditionalErrorInfo string          `json:"additionalErrorInfo"`
 }
 
 // SnapshotToggleSticky Set or remove sticky attribute ("sticky" snapshots are never purged).
 // Name of snapshot can be retrieved with snapshot/list call – look for fileName variable.
-// todo: test
+// todo: 网页上设置和 api 设置, 状态不同步
 func (c *Client) SnapshotToggleSticky(req *SnapshotToggleStickyReq) (*SnapshotToggleStickyRsp, error) {
 	call := "/snapshot/toggleSticky"
 	req.Auth = c.auth
 	rsp := &SnapshotToggleStickyRsp{}
+	return rsp, c.do(call, req, rsp)
+}
+
+type SnapshotExportReq struct {
+	*Auth
+	Snapshot string `json:"snapshot"`
+}
+
+type SnapshotExportRsp struct {
+	Error int    `json:"error"`
+	Token string `json:"token"`
+}
+
+// SnapshotExport Generates a token with which the snapshot can be transferred to another instance.
+func (c *Client) SnapshotExport(req *SnapshotExportReq) (*SnapshotExportRsp, error) {
+	call := "/snapshot/export"
+	req.Auth = c.auth
+	rsp := &SnapshotExportRsp{}
+	return rsp, c.do(call, req, rsp)
+}
+
+type SnapshotImportReq struct {
+	*Auth
+	SourceVeID  string `json:"sourceVeid"`
+	SourceToken string `json:"sourceToken"`
+}
+
+type SnapshotImportRsp struct {
+}
+
+// SnapshotImport Imports a snapshot from another instance identified by VEID and Token.
+// Both VEID and Token must be obtained from another instance beforehand with a snapshot/export call.
+// todo: test
+func (c *Client) SnapshotImport(req *SnapshotImportReq) (*SnapshotImportRsp, error) {
+	call := "/snapshot/import"
+	req.Auth = c.auth
+	rsp := &SnapshotImportRsp{}
 	return rsp, c.do(call, req, rsp)
 }
