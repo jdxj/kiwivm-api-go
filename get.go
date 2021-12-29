@@ -193,11 +193,8 @@ type AuditLog struct {
 	Summary       string          `json:"summary"`
 }
 
-// todo: refactor
-func (al AuditLog) GetIP() (net.IP, error) {
-	num := len(al.RequestorIpv4)
-	// 空值
-	if num <= 1 {
+func (al AuditLog) IPV4() (net.IP, error) {
+	if len(al.RequestorIpv4) < 2 {
 		return net.IP{}, nil
 	}
 

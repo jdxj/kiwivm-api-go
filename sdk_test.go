@@ -89,7 +89,7 @@ func TestClient_GetAuditLog(t *testing.T) {
 		t.Fatalf("%s\n", err)
 	}
 	for _, v := range rsp.LogEntries {
-		ip, err := v.GetIP()
+		ip, err := v.IPV4()
 		if err != nil {
 			t.Fatalf("%s\n", err)
 		}
