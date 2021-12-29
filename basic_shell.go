@@ -7,8 +7,7 @@ type BasicShellCDReq struct {
 }
 
 type BasicShellCDRsp struct {
-	Error   int    `json:"error"`
-	Message string `json:"message"`
+	Status
 	// Result of the "pwd" command after the change.
 	PWD string `json:"pwd"`
 }

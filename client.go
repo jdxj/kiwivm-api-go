@@ -121,11 +121,17 @@ func (c *Client) do(call string, req, rsp interface{}) error {
 	return json.Unmarshal(d, rsp)
 }
 
+type Status struct {
+	Error   int    `json:"error"`
+	Message string `json:"message"`
+}
+
 type StartRsp struct {
-	Error     int `json:"error"`
+	Status
 	IsMounted int `json:"is_mounted"`
 }
 
+// Start the VPS
 func (c *Client) Start() (*StartRsp, error) {
 	call := "/start"
 	req := c.auth
@@ -134,9 +140,10 @@ func (c *Client) Start() (*StartRsp, error) {
 }
 
 type StopRsp struct {
-	Error int `json:"error"`
+	Status
 }
 
+// Stop the VPS
 func (c *Client) Stop() (*StopRsp, error) {
 	call := "/stop"
 	req := c.auth
@@ -145,9 +152,10 @@ func (c *Client) Stop() (*StopRsp, error) {
 }
 
 type RestartRsp struct {
-	Error int `json:"error"`
+	Status
 }
 
+// Restart Reboots the VPS
 func (c *Client) Restart() (*RestartRsp, error) {
 	call := "/restart"
 	req := c.auth
@@ -156,8 +164,11 @@ func (c *Client) Restart() (*RestartRsp, error) {
 }
 
 type KillRsp struct {
+	Status
 }
 
+// Kill Allows to forcibly stop a VPS that is stuck and cannot be stopped by normal means.
+// Please use this feature with great care as any unsaved data will be lost.
 // todo: test
 func (c *Client) Kill() (*KillRsp, error) {
 	call := "/kill"
@@ -172,8 +183,12 @@ type ReinstallOSReq struct {
 }
 
 type ReinstallOSRsp struct {
+	Status
 }
 
+// ReinstallOS Reinstall the Operating System.
+// OS must be specified via "os" variable.
+// Use getAvailableOS call to get list of available systems.
 // todo: test
 func (c *Client) ReinstallOS(req *ReinstallOSReq) (*ReinstallOSRsp, error) {
 	call := "/reinstallOS"
@@ -183,23 +198,14 @@ func (c *Client) ReinstallOS(req *ReinstallOSReq) (*ReinstallOSRsp, error) {
 }
 
 type ResetRootPasswordRsp struct {
+	Status
 }
 
+// ResetRootPassword Generates and sets a new root password.
 // todo: test
 func (c *Client) ResetRootPassword() (*ResetRootPasswordRsp, error) {
 	call := "/resetRootPassword"
 	req := c.auth
 	rsp := &ResetRootPasswordRsp{}
 	return rsp, c.do(call, req, rsp)
-}
-
-type CreateSnapshotReq struct {
-	*Auth
-}
-
-type CreateSnapshotRsp struct {
-}
-
-func (c *Client) CreateSnapshot() {
-
 }

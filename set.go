@@ -6,9 +6,10 @@ type SetHostnameReq struct {
 }
 
 type SetHostnameRsp struct {
-	Error int `json:"error"`
+	Status
 }
 
+// SetHostname Sets new hostname.
 func (c *Client) SetHostname(req *SetHostnameReq) (*SetHostnameRsp, error) {
 	call := "/setHostname"
 	req.Auth = c.auth
@@ -23,9 +24,10 @@ type SetPTRReq struct {
 }
 
 type SetPTRRsp struct {
-	Error int `json:"error"`
+	Status
 }
 
+// SetPTR Sets new PTR (rDNS) record for IP.
 func (c *Client) SetPTR(req *SetPTRReq) (*SetPTRRsp, error) {
 	call := "/setPTR"
 	req.Auth = c.auth

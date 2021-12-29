@@ -6,8 +6,9 @@ type ShellScriptExecReq struct {
 }
 
 type ShellScriptExecRsp struct {
-	Error          int    `json:"error"`
-	NodeIP         string `json:"node_ip"`
+	Status
+	NodeIP string `json:"node_ip"`
+	// Name of the output log file.
 	Log            string `json:"log"`
 	OutputStreamID string `json:"output_stream_id"`
 }

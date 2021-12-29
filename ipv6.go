@@ -6,6 +6,7 @@ type IPV6AddReq struct {
 }
 
 type IPV6AddRsp struct {
+	Status
 }
 
 // IPV6Add Assigns a new IPv6 address.
@@ -27,6 +28,7 @@ type IPV6DeleteReq struct {
 }
 
 type IPV6DeleteRsp struct {
+	Status
 }
 
 // IPV6Delete Releases specified IPv6 address.

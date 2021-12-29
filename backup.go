@@ -31,7 +31,8 @@ type BackupCopyToSnapshotRsp struct {
 	Message string `json:"message"`
 }
 
-// BackupCopyToSnapshot Copies a backup identified by backup_token (returned by backup/list) into a restorable Snapshot.
+// BackupCopyToSnapshot Copies a backup identified by backup_token
+// (returned by backup/list) into a restorable Snapshot.
 // todo: 测试报错, error: 756130
 func (c *Client) BackupCopyToSnapshot(req *BackupCopyToSnapshotReq) (*BackupCopyToSnapshotRsp, error) {
 	call := "/backup/copyToSnapshot"

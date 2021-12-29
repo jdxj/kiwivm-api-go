@@ -265,3 +265,11 @@ func TestClient_PrivateIPGetAvailableIPs(t *testing.T) {
 	}
 	fmt.Printf("%+v\n", rsp)
 }
+
+func TestClient_GetSSHKeys(t *testing.T) {
+	rsp, err := cc.GetSSHKeys()
+	if err != nil {
+		t.Fatalf("%s\n", err)
+	}
+	fmt.Printf("%+v\n", rsp)
+}

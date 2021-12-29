@@ -6,11 +6,12 @@ import (
 
 type SnapshotCreateReq struct {
 	*Auth
+	// optional
 	Description string `json:"description"`
 }
 
 type SnapshotCreateRsp struct {
-	Error int `json:"error"`
+	Status
 	// E-mail address on file where notification will be sent once task is completed.
 	NotificationEmail string `json:"notificationEmail"`
 }
@@ -36,7 +37,7 @@ type Snapshot struct {
 }
 
 type SnapshotListRsp struct {
-	Error int `json:"error"`
+	Status
 	// Array of snapshots (fileName, os, description, size, md5, sticky, purgesIn, downloadLink).
 	Snapshots []Snapshot `json:"snapshots"`
 }
@@ -55,7 +56,7 @@ type SnapshotDeleteReq struct {
 }
 
 type SnapshotDeleteRsp struct {
-	Error             int    `json:"error"`
+	Status
 	NotificationEmail string `json:"notificationEmail"`
 }
 
@@ -73,6 +74,7 @@ type SnapshotRestoreReq struct {
 }
 
 type SnapshotRestoreRsp struct {
+	Status
 }
 
 // SnapshotRestore Restores snapshot by fileName (can be retrieved with snapshot/list call).
@@ -119,7 +121,7 @@ type SnapshotExportReq struct {
 }
 
 type SnapshotExportRsp struct {
-	Error int    `json:"error"`
+	Status
 	Token string `json:"token"`
 }
 
@@ -138,6 +140,7 @@ type SnapshotImportReq struct {
 }
 
 type SnapshotImportRsp struct {
+	Status
 }
 
 // SnapshotImport Imports a snapshot from another instance identified by VEID and Token.
