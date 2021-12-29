@@ -188,3 +188,80 @@ func (c *Client) GetAuditLog() (*GetAuditLogRsp, error) {
 	rsp := &GetAuditLogRsp{}
 	return rsp, c.do(call, req, rsp)
 }
+
+type GetSuspensionDetailsRsp struct {
+}
+
+// GetSuspensionDetails Retrieve information related to service suspensions.
+// todo: test
+func (c *Client) GetSuspensionDetails() (*GetSuspensionDetailsRsp, error) {
+	call := "/getSuspensionDetails"
+	req := c.auth
+	rsp := &GetSuspensionDetailsRsp{}
+	return rsp, c.do(call, req, rsp)
+}
+
+type UnsuspendReq struct {
+	*Auth
+	RecordID string `json:"record_id"`
+}
+
+type UnsuspendRsp struct {
+}
+
+// Unsuspend Clear abuse issue identified by record_id and unsuspend the VPS.
+// Refer to getSuspensionDetails call for details.
+// todo: test
+func (c *Client) Unsuspend(req *UnsuspendReq) (*UnsuspendRsp, error) {
+	call := "/unsuspend"
+	req.Auth = c.auth
+	rsp := &UnsuspendRsp{}
+	return rsp, c.do(call, req, rsp)
+}
+
+type GetPolicyViolationsRsp struct {
+}
+
+// GetPolicyViolations Retrieve information related to active policy violations.
+// todo: test
+func (c *Client) GetPolicyViolations() (*GetPolicyViolationsRsp, error) {
+	call := "/getPolicyViolations"
+	req := c.auth
+	rsp := &GetPolicyViolationsRsp{}
+	return rsp, c.do(call, req, rsp)
+}
+
+type ResolvePolicyViolationReq struct {
+	*Auth
+	RecordID string `json:"record_id"`
+}
+
+type ResolvePolicyViolationRsp struct {
+}
+
+// ResolvePolicyViolation Mark policy violation as resolved.
+// This is required to avoid service suspension.
+// Refer to getPolicyViolations call for details.
+// todo: test
+func (c *Client) ResolvePolicyViolation(req *ResolvePolicyViolationReq) (*ResolvePolicyViolationRsp, error) {
+	call := "/resolvePolicyViolation"
+	req.Auth = c.auth
+	rsp := &ResolvePolicyViolationRsp{}
+	return rsp, c.do(call, req, rsp)
+}
+
+type GetRateLimitStatusRsp struct {
+	Error                int `json:"error"`
+	RemainingPoints15Min int `json:"remaining_points_15min"`
+	RemainingPoints24H   int `json:"remaining_points_24h"`
+}
+
+// GetRateLimitStatus When you perform too many API calls in a short amount of time,
+// KiwiVM API may start dropping your requests for a few minutes.
+// This call allows monitoring this matter.
+func (c *Client) GetRateLimitStatus() (*GetRateLimitStatusRsp, error) {
+	call := "/getRateLimitStatus"
+	req := c.auth
+	rsp := &GetRateLimitStatusRsp{}
+	return rsp, c.do(call, req, rsp)
+}

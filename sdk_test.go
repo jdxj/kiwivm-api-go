@@ -233,3 +233,35 @@ func TestClient_MigrateGetLocations(t *testing.T) {
 	}
 	fmt.Printf("%+v\n", rsp)
 }
+
+func TestClient_GetSuspensionDetails(t *testing.T) {
+	rsp, err := cc.GetSuspensionDetails()
+	if err != nil {
+		t.Fatalf("%s\n", err)
+	}
+	fmt.Printf("%+v\n", rsp)
+}
+
+func TestClient_GetPolicyViolations(t *testing.T) {
+	rsp, err := cc.GetPolicyViolations()
+	if err != nil {
+		t.Fatalf("%s\n", err)
+	}
+	fmt.Printf("%+v\n", rsp)
+}
+
+func TestClient_GetRateLimitStatus(t *testing.T) {
+	rsp, err := cc.GetRateLimitStatus()
+	if err != nil {
+		t.Fatalf("%s\n", err)
+	}
+	fmt.Printf("%+v\n", rsp)
+}
+
+func TestClient_PrivateIPGetAvailableIPs(t *testing.T) {
+	rsp, err := cc.PrivateIPGetAvailableIPs()
+	if err != nil {
+		t.Fatalf("%s\n", err)
+	}
+	fmt.Printf("%+v\n", rsp)
+}
