@@ -1,7 +1,7 @@
 package kiwivm_sdk_go
 
 type MigrateGetLocationsRsp struct {
-	Error int `json:"error"`
+	Status
 
 	// ID of current location
 	CurrentLocation string `json:"currentLocation"`

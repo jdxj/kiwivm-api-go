@@ -1,22 +1,37 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"time"
 
 	sdk "github.com/jdxj/kiwivm-sdk-go"
+	"github.com/jdxj/kiwivm-sdk-go/conf"
 )
 
 func main() {
-	var (
-		veid   = ""
-		apiKey = ""
-	)
-	client := sdk.NewClient(veid, apiKey)
+	client := sdk.NewClient(conf.VeID, conf.APIKey)
 	stats, err := client.GetRawUsageStats()
 	if err != nil {
 		log.Fatalln(err)
 	}
+
+	var (
+		in  int64
+		out int64
+	)
 	for _, v := range stats.Data {
-		fmt.pr
+		in += v.NetworkInBytes
+		out += v.NetworkOutBytes
+		fmt.Printf("ts: %s, in: %d, out: %d\n",
+			time.Unix(v.Timestamp, 0).Format(time.RFC3339),
+			v.NetworkInBytes,
+			v.NetworkOutBytes,
+		)
 	}
+	fmt.Printf("in: %d, out: %d, total: %d\n", in, out, in+out)
+}
+
+func today0oClock() int64 {
+	return (time.Now().Unix() / 86400) * 86400
 }
