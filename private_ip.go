@@ -1,8 +1,7 @@
 package kiwivm_sdk_go
 
 type PrivateIPGetAvailableIPsRsp struct {
-	Error   int    `json:"error"`
-	Message string `json:"message"`
+	Status
 }
 
 // PrivateIPGetAvailableIPs Returns all available (free) IPv4 addresses which you can activate on VM
@@ -21,6 +20,7 @@ type PrivateIpAssignReq struct {
 }
 
 type PrivateIpAssignRsp struct {
+	Status
 }
 
 // PrivateIpAssign Assign private IP address.
@@ -39,6 +39,7 @@ type PrivateIpDeleteReq struct {
 }
 
 type PrivateIpDeleteRsp struct {
+	Status
 }
 
 // PrivateIpDelete Delete private IP address.
