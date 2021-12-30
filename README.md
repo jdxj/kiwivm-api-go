@@ -1,6 +1,7 @@
 # KiwiVM-SDK-Go
 
-This repository encapsulates kiwi api with go http client, which can be used to automate some tasks.
+This repository encapsulates [kiwi api](https://kiwivm.64clouds.com/) with
+go http client, which can be used to automate some tasks.
 
 Note: This is not an official repository.
 

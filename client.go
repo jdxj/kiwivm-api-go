@@ -16,6 +16,8 @@ const (
 	version = "/v1"
 )
 
+// Encode encodes the field into the form of key1=value1&key2=value2
+// according to the go struct tag.
 func Encode(i interface{}) string {
 	v := url.Values{}
 	encode(i, v)
