@@ -27,6 +27,7 @@ type BasicShellExecReq struct {
 }
 
 type BasicShellExecRsp struct {
+	// no need Status
 	// Exit status code of the executed command
 	Error int `json:"error"`
 	// Console output of the executed command

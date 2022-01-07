@@ -28,8 +28,20 @@ func TestEncode(t *testing.T) {
 	fmt.Printf("req2: %s\n", s)
 }
 
+func TestEncode_SnapshotToggleStickyReq(t *testing.T) {
+	tsr := &SnapshotToggleStickyReq{
+		Auth: &Auth{
+			VeID:   "abc",
+			APIKey: "def",
+		},
+		Snapshot: "ghi",
+		Sticky:   13,
+	}
+	fmt.Printf("%s\n", Encode(tsr))
+}
+
 func TestClient_GetServiceInfo(t *testing.T) {
-	c := NewClient(conf.VeID, conf.APIKey)
+	c := NewClient(conf.VeID, conf.APIKey, WithDebug(true))
 	rsp, err := c.GetServiceInfo()
 	if err != nil {
 		t.Fatalf("%+v\n", err)
@@ -191,7 +203,7 @@ func TestClient_SnapshotDelete(t *testing.T) {
 
 func TestClient_SnapshotToggleSticky(t *testing.T) {
 	rsp, err := cc.SnapshotToggleSticky(&SnapshotToggleStickyReq{
-		Snapshot: "snapshot-1670298-1640655921-2021-12-27-3af2c5902ed7f23ae32e6f1ff4cd71aa50e5919d.tar.gz",
+		Snapshot: "snapshot-1670298-1641526373-2022-01-06-058c1a7336b49aa3b6ab94f49cdac42787abc15f.tar.gz",
 		Sticky:   RemoveSticky,
 	})
 	if err != nil {
@@ -220,7 +232,7 @@ func TestClient_BackupList(t *testing.T) {
 
 func TestClient_BackupCopyToSnapshot(t *testing.T) {
 	rsp, err := cc.BackupCopyToSnapshot(&BackupCopyToSnapshotReq{
-		BackupToken: "e6dfb352f377912048bea6780d196981c1570768",
+		BackupToken: "52afc2c8204d2ea2f164a46c3bf06e6a6d05644e",
 	})
 	if err != nil {
 		t.Fatalf("%s\n", err)

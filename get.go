@@ -64,8 +64,7 @@ type GetServiceInfoRsp struct {
 	// Whether or not Private Network features are available at this location
 	LocationPrivateNetworkAvailable bool `json:"location_private_network_available"`
 	// rDNS records (Array of two-dimensional arrays: ip=>value)
-	// todo: test
-	Ptr map[string]json.RawMessage `json:"ptr"`
+	Ptr map[string]string `json:"ptr"`
 	// Whether VPS is suspended
 	Suspended bool `json:"suspended"`
 	// Whether there is an active policy violation that needs attention (see getPolicyViolations)
@@ -112,7 +111,6 @@ type GetLiveServiceInfoRsp struct {
 	// 0 = Disk I/O is not throttled, 1 = Disk I/O is throttled due to high usage.
 	// Throttling resets automatically every 15-180 minutes depending on sustained
 	// storage I/O utilization.
-	// todo: test
 	IsDiskThrottled string `json:"is_disk_throttled"`
 	// Result of "hostname" command executed inside VPS
 	LiveHostname string `json:"live_hostname"`
@@ -131,7 +129,6 @@ type GetLiveServiceInfoRsp struct {
 	// both
 	// 0 = CPU is not throttled, 1 = CPU is throttled due to high usage.
 	// Throttling resets automatically every 2 hours.
-	// todo: test
 	IsCpuThrottled string `json:"is_cpu_throttled"`
 	// SSH port of the VPS (returned only if VPS is running)
 	SSHPort int `json:"ssh_port"`
@@ -230,10 +227,13 @@ func (c *Client) GetAuditLog() (*GetAuditLogRsp, error) {
 }
 
 type GetSuspensionDetailsRsp struct {
+	SuspensionCount  json.RawMessage `json:"suspension_count"`
+	TotalAbusePoints int             `json:"total_abuse_points"`
+	MaxAbusePoints   int             `json:"max_abuse_points"`
+	Status
 }
 
 // GetSuspensionDetails Retrieve information related to service suspensions.
-// todo: test
 func (c *Client) GetSuspensionDetails() (*GetSuspensionDetailsRsp, error) {
 	call := "/getSuspensionDetails"
 	req := c.auth
@@ -261,11 +261,12 @@ func (c *Client) Unsuspend(req *UnsuspendReq) (*UnsuspendRsp, error) {
 }
 
 type GetPolicyViolationsRsp struct {
+	TotalAbusePoints int `json:"total_abuse_points"`
+	MaxAbusePoints   int `json:"max_abuse_points"`
 	Status
 }
 
 // GetPolicyViolations Retrieve information related to active policy violations.
-// todo: test
 func (c *Client) GetPolicyViolations() (*GetPolicyViolationsRsp, error) {
 	call := "/getPolicyViolations"
 	req := c.auth

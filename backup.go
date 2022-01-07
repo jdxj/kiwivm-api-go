@@ -8,7 +8,7 @@ type Backup struct {
 }
 
 type BackupListRsp struct {
-	Error int `json:"error"`
+	Status
 	// Array of backups (backup_token, size, os, md5, timestamp).
 	Backups map[string]Backup `json:"backups"`
 }
@@ -23,17 +23,16 @@ func (c *Client) BackupList() (*BackupListRsp, error) {
 
 type BackupCopyToSnapshotReq struct {
 	*Auth
-	BackupToken string `json:"backup_token"`
+	BackupToken string `json:"backupToken"`
 }
 
 type BackupCopyToSnapshotRsp struct {
-	Error   int    `json:"error"`
-	Message string `json:"message"`
+	Status
+	NotificationEmail string `json:"notificationEmail"`
 }
 
 // BackupCopyToSnapshot Copies a backup identified by backup_token
 // (returned by backup/list) into a restorable Snapshot.
-// todo: 测试报错, error: 756130
 func (c *Client) BackupCopyToSnapshot(req *BackupCopyToSnapshotReq) (*BackupCopyToSnapshotRsp, error) {
 	call := "/backup/copyToSnapshot"
 	req.Auth = c.auth

@@ -107,7 +107,6 @@ type SnapshotToggleStickyRsp struct {
 
 // SnapshotToggleSticky Set or remove sticky attribute ("sticky" snapshots are never purged).
 // Name of snapshot can be retrieved with snapshot/list call – look for fileName variable.
-// todo: 网页上设置和 api 设置, 状态不同步
 func (c *Client) SnapshotToggleSticky(req *SnapshotToggleStickyReq) (*SnapshotToggleStickyRsp, error) {
 	call := "/snapshot/toggleSticky"
 	req.Auth = c.auth

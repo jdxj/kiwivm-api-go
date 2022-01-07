@@ -46,7 +46,8 @@ func encode(d interface{}, v url.Values) {
 				err := fmt.Sprintf("json tag not found: %s", fieldName)
 				panic(err)
 			}
-			v.Add(key, rv.Field(i).String())
+			value := fmt.Sprintf("%v", rv.Field(i).Interface())
+			v.Add(key, value)
 		} else {
 			encode(rv.Field(i).Interface(), v)
 		}
@@ -124,8 +125,9 @@ func (c *Client) do(call string, req, rsp interface{}) error {
 }
 
 type Status struct {
-	Error   int    `json:"error"`
-	Message string `json:"message"`
+	Error               int    `json:"error"`
+	Message             string `json:"message"`
+	AdditionalErrorInfo string `json:"additionalErrorInfo"`
 }
 
 type StartRsp struct {
