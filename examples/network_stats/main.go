@@ -1,17 +1,3 @@
-# KiwiVM-SDK-Go
-
-This repository encapsulates [kiwi api](https://kiwivm.64clouds.com/) with
-go http client, which can be used to automate some tasks.
-
-Note: This is not an official repository.
-
-![logo](https://kiwivm.64clouds.com/1670298/img/kiwivm_logo_100x33px.png)
-
-## Usage
-
-[examples](./examples)
-
-```go
 package main
 
 import (
@@ -45,8 +31,7 @@ func main() {
 	}
 	fmt.Printf("in: %d, out: %d, total: %d\n", in, out, in+out)
 }
-```
 
-## License
-
-[MIT](https://choosealicense.com/licenses/mit/)
+func today0oClock() int64 {
+	return (time.Now().Unix() / 86400) * 86400
+}
