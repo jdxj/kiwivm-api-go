@@ -6,11 +6,10 @@ import (
 	"time"
 
 	sdk "github.com/jdxj/kiwivm-sdk-go"
-	"github.com/jdxj/kiwivm-sdk-go/conf"
 )
 
 func main() {
-	client := sdk.NewClient(conf.VeID, conf.APIKey)
+	client := sdk.NewClient("", "")
 	stats, err := client.GetRawUsageStats()
 	if err != nil {
 		log.Fatalln(err)

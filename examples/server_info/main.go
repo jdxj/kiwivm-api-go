@@ -5,11 +5,10 @@ import (
 	"log"
 
 	sdk "github.com/jdxj/kiwivm-sdk-go"
-	"github.com/jdxj/kiwivm-sdk-go/conf"
 )
 
 func main() {
-	client := sdk.NewClient(conf.VeID, conf.APIKey)
+	client := sdk.NewClient("", "")
 	info, err := client.GetServiceInfo()
 	if err != nil {
 		log.Fatalln(err)

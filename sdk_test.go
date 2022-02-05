@@ -4,18 +4,16 @@ import (
 	"encoding/json"
 	"fmt"
 	"testing"
-
-	"github.com/jdxj/kiwivm-sdk-go/conf"
 )
 
 var (
-	cc = NewClient(conf.VeID, conf.APIKey, WithDebug(true))
+	cc = NewClient("", "", WithDebug(true))
 )
 
 func TestEncode(t *testing.T) {
 	req := &Auth{
-		VeID:   conf.VeID,
-		APIKey: conf.APIKey,
+		VeID:   "",
+		APIKey: "",
 	}
 	s := Encode(req)
 	fmt.Printf("req: %s\n", s)
@@ -41,7 +39,7 @@ func TestEncode_SnapshotToggleStickyReq(t *testing.T) {
 }
 
 func TestClient_GetServiceInfo(t *testing.T) {
-	c := NewClient(conf.VeID, conf.APIKey, WithDebug(true))
+	c := NewClient("", "", WithDebug(true))
 	rsp, err := c.GetServiceInfo()
 	if err != nil {
 		t.Fatalf("%+v\n", err)
@@ -133,8 +131,8 @@ func TestClient_SetHostname(t *testing.T) {
 
 func TestClient_SetPTR(t *testing.T) {
 	rsp, err := cc.SetPTR(&SetPTRReq{
-		IP:  conf.IP,
-		PTR: conf.PTR,
+		IP:  "",
+		PTR: "",
 	})
 	if err != nil {
 		t.Fatalf("%s\n", err)
