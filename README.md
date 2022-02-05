@@ -9,6 +9,10 @@ Note: This is not an official repository.
 
 ## Usage
 
+```shell
+$ go get -u github.com/jdxj/kiwivm-sdk-go@v0.1.0
+```
+
 [examples](./examples)
 
 ```go
