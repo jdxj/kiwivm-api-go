@@ -1,4 +1,4 @@
-package kiwivm_sdk_go
+package kiwi
 
 import (
 	"encoding/json"
@@ -6,9 +6,7 @@ import (
 	"testing"
 )
 
-var (
-	cc = NewClient("", "", WithDebug(true))
-)
+var cc = NewClient("", "", WithDebug(true))
 
 func TestEncode(t *testing.T) {
 	req := &Auth{

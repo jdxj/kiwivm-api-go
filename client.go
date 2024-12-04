@@ -1,4 +1,4 @@
-package kiwivm_sdk_go
+package kiwi
 
 import (
 	"context"

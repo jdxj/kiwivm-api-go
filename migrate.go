@@ -1,4 +1,4 @@
-package kiwivm_sdk_go
+package kiwi
 
 type MigrateGetLocationsRsp struct {
 	Status
@@ -32,8 +32,7 @@ type MigrateStartReq struct {
 	Location string `json:"location"`
 }
 
-type MigrateStartRsp struct {
-}
+type MigrateStartRsp struct{}
 
 // MigrateStart Start VPS migration to new location.
 // Takes new location ID as input.
@@ -55,8 +54,7 @@ type CloneFromExternalServerReq struct {
 	ExternalServerRootPassword string `json:"externalServerRootPassword"`
 }
 
-type CloneFromExternalServerRsp struct {
-}
+type CloneFromExternalServerRsp struct{}
 
 // CloneFromExternalServer (OVZ only) Clone a remote server or VPS.
 // See Migrate from another server for example on how this works.

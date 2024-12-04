@@ -1,4 +1,4 @@
-package kiwivm_sdk_go
+package kiwi
 
 type Backup struct {
 	Size      int    `json:"size"`

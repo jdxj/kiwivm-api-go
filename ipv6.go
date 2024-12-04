@@ -1,4 +1,4 @@
-package kiwivm_sdk_go
+package kiwi
 
 type IPV6AddReq struct {
 	*Auth

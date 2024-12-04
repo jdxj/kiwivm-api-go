@@ -1,3 +1,3 @@
-module github.com/jdxj/kiwivm-sdk-go
+module github.com/jdxj/kiwivm-api-go
 
-go 1.17
+go 1.23
