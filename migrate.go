@@ -1,5 +1,7 @@
 package kiwi
 
+import "context"
+
 type MigrateGetLocationsRsp struct {
 	Status
 
@@ -20,11 +22,10 @@ type MigrateGetLocationsRsp struct {
 }
 
 // MigrateGetLocations Return all possible migration locations.
-func (c *Client) MigrateGetLocations() (*MigrateGetLocationsRsp, error) {
+func (c *Client) MigrateGetLocations(ctx context.Context) (*MigrateGetLocationsRsp, error) {
 	call := "/migrate/getLocations"
 	req := c.auth
-	rsp := &MigrateGetLocationsRsp{}
-	return rsp, c.do(call, req, rsp)
+	return doHTTP[*Auth, *MigrateGetLocationsRsp](ctx, c.hc, call, req)
 }
 
 type MigrateStartReq struct {
@@ -40,11 +41,10 @@ type MigrateStartRsp struct{}
 // to be replaced with new ones, and all IPv6 addresses
 // will be released.
 // todo: test
-func (c *Client) MigrateStart(req *MigrateStartReq) (*MigrateStartRsp, error) {
+func (c *Client) MigrateStart(ctx context.Context, req *MigrateStartReq) (*MigrateStartRsp, error) {
 	call := "/migrate/start"
 	req.Auth = c.auth
-	rsp := &MigrateStartRsp{}
-	return rsp, c.do(call, req, rsp)
+	return doHTTP[*MigrateStartReq, *MigrateStartRsp](ctx, c.hc, call, req)
 }
 
 type CloneFromExternalServerReq struct {
@@ -59,9 +59,8 @@ type CloneFromExternalServerRsp struct{}
 // CloneFromExternalServer (OVZ only) Clone a remote server or VPS.
 // See Migrate from another server for example on how this works.
 // todo: test
-func (c *Client) CloneFromExternalServer(req *CloneFromExternalServerReq) (*CloneFromExternalServerRsp, error) {
+func (c *Client) CloneFromExternalServer(ctx context.Context, req *CloneFromExternalServerReq) (*CloneFromExternalServerRsp, error) {
 	call := "/cloneFromExternalServer"
 	req.Auth = c.auth
-	rsp := &CloneFromExternalServerRsp{}
-	return rsp, c.do(call, req, rsp)
+	return doHTTP[*CloneFromExternalServerReq, *CloneFromExternalServerRsp](ctx, c.hc, call, req)
 }

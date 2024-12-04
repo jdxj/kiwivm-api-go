@@ -1,5 +1,7 @@
 package kiwi
 
+import "context"
+
 type ShellScriptExecReq struct {
 	*Auth
 	Script string `json:"script"`
@@ -14,9 +16,8 @@ type ShellScriptExecRsp struct {
 }
 
 // ShellScriptExec Execute a shell script on the VPS (asynchronously).
-func (c *Client) ShellScriptExec(req *ShellScriptExecReq) (*ShellScriptExecRsp, error) {
+func (c *Client) ShellScriptExec(ctx context.Context, req *ShellScriptExecReq) (*ShellScriptExecRsp, error) {
 	call := "/shellScript/exec"
 	req.Auth = c.auth
-	rsp := &ShellScriptExecRsp{}
-	return rsp, c.do(call, req, rsp)
+	return doHTTP[*ShellScriptExecReq, *ShellScriptExecRsp](ctx, c.hc, call, req)
 }

@@ -1,6 +1,7 @@
 package kiwi
 
 import (
+	"context"
 	"encoding/json"
 )
 
@@ -17,11 +18,10 @@ type SnapshotCreateRsp struct {
 }
 
 // SnapshotCreate Create snapshot
-func (c *Client) SnapshotCreate(req *SnapshotCreateReq) (*SnapshotCreateRsp, error) {
+func (c *Client) SnapshotCreate(ctx context.Context, req *SnapshotCreateReq) (*SnapshotCreateRsp, error) {
 	call := "/snapshot/create"
 	req.Auth = c.auth
-	rsp := &SnapshotCreateRsp{}
-	return rsp, c.do(call, req, rsp)
+	return doHTTP[*SnapshotCreateReq, *SnapshotCreateRsp](ctx, c.hc, call, req)
 }
 
 type Snapshot struct {
@@ -43,11 +43,10 @@ type SnapshotListRsp struct {
 }
 
 // SnapshotList Get list of snapshots.
-func (c *Client) SnapshotList() (*SnapshotListRsp, error) {
+func (c *Client) SnapshotList(ctx context.Context) (*SnapshotListRsp, error) {
 	call := "/snapshot/list"
 	req := c.auth
-	rsp := &SnapshotListRsp{}
-	return rsp, c.do(call, req, rsp)
+	return doHTTP[*Auth, *SnapshotListRsp](ctx, c.hc, call, req)
 }
 
 type SnapshotDeleteReq struct {
@@ -61,11 +60,10 @@ type SnapshotDeleteRsp struct {
 }
 
 // SnapshotDelete Delete snapshot by fileName (can be retrieved with snapshot/list call).
-func (c *Client) SnapshotDelete(req *SnapshotDeleteReq) (*SnapshotDeleteRsp, error) {
+func (c *Client) SnapshotDelete(ctx context.Context, req *SnapshotDeleteReq) (*SnapshotDeleteRsp, error) {
 	call := "/snapshot/delete"
 	req.Auth = c.auth
-	rsp := &SnapshotDeleteRsp{}
-	return rsp, c.do(call, req, rsp)
+	return doHTTP[*SnapshotDeleteReq, *SnapshotDeleteRsp](ctx, c.hc, call, req)
 }
 
 type SnapshotRestoreReq struct {
@@ -80,11 +78,10 @@ type SnapshotRestoreRsp struct {
 // SnapshotRestore Restores snapshot by fileName (can be retrieved with snapshot/list call).
 // This will overwrite all data on the VPS.
 // todo: 测试
-func (c *Client) SnapshotRestore(req *SnapshotRestoreReq) (*SnapshotRestoreRsp, error) {
+func (c *Client) SnapshotRestore(ctx context.Context, req *SnapshotRestoreReq) (*SnapshotRestoreRsp, error) {
 	call := "/snapshot/restore"
 	req.Auth = c.auth
-	rsp := &SnapshotRestoreRsp{}
-	return rsp, c.do(call, req, rsp)
+	return doHTTP[*SnapshotRestoreReq, *SnapshotRestoreRsp](ctx, c.hc, call, req)
 }
 
 const (
@@ -107,11 +104,10 @@ type SnapshotToggleStickyRsp struct {
 
 // SnapshotToggleSticky Set or remove sticky attribute ("sticky" snapshots are never purged).
 // Name of snapshot can be retrieved with snapshot/list call – look for fileName variable.
-func (c *Client) SnapshotToggleSticky(req *SnapshotToggleStickyReq) (*SnapshotToggleStickyRsp, error) {
+func (c *Client) SnapshotToggleSticky(ctx context.Context, req *SnapshotToggleStickyReq) (*SnapshotToggleStickyRsp, error) {
 	call := "/snapshot/toggleSticky"
 	req.Auth = c.auth
-	rsp := &SnapshotToggleStickyRsp{}
-	return rsp, c.do(call, req, rsp)
+	return doHTTP[*SnapshotToggleStickyReq, *SnapshotToggleStickyRsp](ctx, c.hc, call, req)
 }
 
 type SnapshotExportReq struct {
@@ -125,11 +121,10 @@ type SnapshotExportRsp struct {
 }
 
 // SnapshotExport Generates a token with which the snapshot can be transferred to another instance.
-func (c *Client) SnapshotExport(req *SnapshotExportReq) (*SnapshotExportRsp, error) {
+func (c *Client) SnapshotExport(ctx context.Context, req *SnapshotExportReq) (*SnapshotExportRsp, error) {
 	call := "/snapshot/export"
 	req.Auth = c.auth
-	rsp := &SnapshotExportRsp{}
-	return rsp, c.do(call, req, rsp)
+	return doHTTP[*SnapshotExportReq, *SnapshotExportRsp](ctx, c.hc, call, req)
 }
 
 type SnapshotImportReq struct {
@@ -145,9 +140,8 @@ type SnapshotImportRsp struct {
 // SnapshotImport Imports a snapshot from another instance identified by VEID and Token.
 // Both VEID and Token must be obtained from another instance beforehand with a snapshot/export call.
 // todo: test
-func (c *Client) SnapshotImport(req *SnapshotImportReq) (*SnapshotImportRsp, error) {
+func (c *Client) SnapshotImport(ctx context.Context, req *SnapshotImportReq) (*SnapshotImportRsp, error) {
 	call := "/snapshot/import"
 	req.Auth = c.auth
-	rsp := &SnapshotImportRsp{}
-	return rsp, c.do(call, req, rsp)
+	return doHTTP[*SnapshotImportReq, *SnapshotImportRsp](ctx, c.hc, call, req)
 }

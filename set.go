@@ -1,5 +1,7 @@
 package kiwi
 
+import "context"
+
 type SetHostnameReq struct {
 	*Auth
 	NewHostname string `json:"newHostname"`
@@ -10,11 +12,10 @@ type SetHostnameRsp struct {
 }
 
 // SetHostname Sets new hostname.
-func (c *Client) SetHostname(req *SetHostnameReq) (*SetHostnameRsp, error) {
+func (c *Client) SetHostname(ctx context.Context, req *SetHostnameReq) (*SetHostnameRsp, error) {
 	call := "/setHostname"
 	req.Auth = c.auth
-	rsp := &SetHostnameRsp{}
-	return rsp, c.do(call, req, rsp)
+	return doHTTP[*SetHostnameReq, *SetHostnameRsp](ctx, c.hc, call, req)
 }
 
 type SetPTRReq struct {
@@ -28,9 +29,8 @@ type SetPTRRsp struct {
 }
 
 // SetPTR Sets new PTR (rDNS) record for IP.
-func (c *Client) SetPTR(req *SetPTRReq) (*SetPTRRsp, error) {
+func (c *Client) SetPTR(ctx context.Context, req *SetPTRReq) (*SetPTRRsp, error) {
 	call := "/setPTR"
 	req.Auth = c.auth
-	rsp := &SetPTRRsp{}
-	return rsp, c.do(call, req, rsp)
+	return doHTTP[*SetPTRReq, *SetPTRRsp](ctx, c.hc, call, req)
 }

@@ -1,16 +1,17 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"time"
 
-	sdk "github.com/jdxj/kiwivm-sdk-go"
+	sdk "github.com/jdxj/kiwivm-api-go"
 )
 
 func main() {
 	client := sdk.NewClient("", "")
-	stats, err := client.GetRawUsageStats()
+	stats, err := client.GetRawUsageStats(context.Background())
 	if err != nil {
 		log.Fatalln(err)
 	}

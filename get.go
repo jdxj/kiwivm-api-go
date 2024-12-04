@@ -1,6 +1,7 @@
 package kiwi
 
 import (
+	"context"
 	"encoding/json"
 	"net"
 	"strconv"
@@ -80,11 +81,10 @@ type GetServiceInfoRsp struct {
 	Status
 }
 
-func (c *Client) GetServiceInfo() (*GetServiceInfoRsp, error) {
+func (c *Client) GetServiceInfo(ctx context.Context) (*GetServiceInfoRsp, error) {
 	call := "/getServiceInfo"
 	req := c.auth
-	rsp := &GetServiceInfoRsp{}
-	return rsp, c.do(call, req, rsp)
+	return doHTTP[*Auth, *GetServiceInfoRsp](ctx, c.hc, call, req)
 }
 
 type GetLiveServiceInfoRsp struct {
@@ -137,11 +137,10 @@ type GetLiveServiceInfoRsp struct {
 // GetLiveServiceInfo This function returns all data provided by getServiceInfo.
 // In addition, it provides detailed status of the VPS.
 // Please note that this call may take up to 15 seconds to complete.
-func (c *Client) GetLiveServiceInfo() (*GetLiveServiceInfoRsp, error) {
+func (c *Client) GetLiveServiceInfo(ctx context.Context) (*GetLiveServiceInfoRsp, error) {
 	call := "/getLiveServiceInfo"
 	req := c.auth
-	rsp := &GetLiveServiceInfoRsp{}
-	return rsp, c.do(call, req, rsp)
+	return doHTTP[*Auth, *GetLiveServiceInfoRsp](ctx, c.hc, call, req)
 }
 
 type GetAvailableOSRsp struct {
@@ -152,11 +151,10 @@ type GetAvailableOSRsp struct {
 	Templates []string `json:"templates"`
 }
 
-func (c *Client) GetAvailableOS() (*GetAvailableOSRsp, error) {
+func (c *Client) GetAvailableOS(ctx context.Context) (*GetAvailableOSRsp, error) {
 	call := "/getAvailableOS"
 	req := c.auth
-	rsp := &GetAvailableOSRsp{}
-	return rsp, c.do(call, req, rsp)
+	return doHTTP[*Auth, *GetAvailableOSRsp](ctx, c.hc, call, req)
 }
 
 type RawUsage struct {
@@ -176,11 +174,10 @@ type GetRawUsageStatsRsp struct {
 
 // GetRawUsageStats Returns a two-dimensional array with the detailed
 // usage statistics shown under Detailed Statistics in KiwiVM.
-func (c *Client) GetRawUsageStats() (*GetRawUsageStatsRsp, error) {
+func (c *Client) GetRawUsageStats(ctx context.Context) (*GetRawUsageStatsRsp, error) {
 	call := "/getRawUsageStats"
 	req := c.auth
-	rsp := &GetRawUsageStatsRsp{}
-	return rsp, c.do(call, req, rsp)
+	return doHTTP[*Auth, *GetRawUsageStatsRsp](ctx, c.hc, call, req)
 }
 
 type AuditLog struct {
@@ -219,11 +216,10 @@ type GetAuditLogRsp struct {
 
 // GetAuditLog Returns an array with the detailed audit
 // log shown under Audit Log in KiwiVM.
-func (c *Client) GetAuditLog() (*GetAuditLogRsp, error) {
+func (c *Client) GetAuditLog(ctx context.Context) (*GetAuditLogRsp, error) {
 	call := "/getAuditLog"
 	req := c.auth
-	rsp := &GetAuditLogRsp{}
-	return rsp, c.do(call, req, rsp)
+	return doHTTP[*Auth, *GetAuditLogRsp](ctx, c.hc, call, req)
 }
 
 type GetSuspensionDetailsRsp struct {
@@ -234,11 +230,10 @@ type GetSuspensionDetailsRsp struct {
 }
 
 // GetSuspensionDetails Retrieve information related to service suspensions.
-func (c *Client) GetSuspensionDetails() (*GetSuspensionDetailsRsp, error) {
+func (c *Client) GetSuspensionDetails(ctx context.Context) (*GetSuspensionDetailsRsp, error) {
 	call := "/getSuspensionDetails"
 	req := c.auth
-	rsp := &GetSuspensionDetailsRsp{}
-	return rsp, c.do(call, req, rsp)
+	return doHTTP[*Auth, *GetSuspensionDetailsRsp](ctx, c.hc, call, req)
 }
 
 type UnsuspendReq struct {
@@ -253,11 +248,10 @@ type UnsuspendRsp struct {
 // Unsuspend Clear abuse issue identified by record_id and unsuspend the VPS.
 // Refer to getSuspensionDetails call for details.
 // todo: test
-func (c *Client) Unsuspend(req *UnsuspendReq) (*UnsuspendRsp, error) {
+func (c *Client) Unsuspend(ctx context.Context, req *UnsuspendReq) (*UnsuspendRsp, error) {
 	call := "/unsuspend"
 	req.Auth = c.auth
-	rsp := &UnsuspendRsp{}
-	return rsp, c.do(call, req, rsp)
+	return doHTTP[*UnsuspendReq, *UnsuspendRsp](ctx, c.hc, call, req)
 }
 
 type GetPolicyViolationsRsp struct {
@@ -267,11 +261,10 @@ type GetPolicyViolationsRsp struct {
 }
 
 // GetPolicyViolations Retrieve information related to active policy violations.
-func (c *Client) GetPolicyViolations() (*GetPolicyViolationsRsp, error) {
+func (c *Client) GetPolicyViolations(ctx context.Context) (*GetPolicyViolationsRsp, error) {
 	call := "/getPolicyViolations"
 	req := c.auth
-	rsp := &GetPolicyViolationsRsp{}
-	return rsp, c.do(call, req, rsp)
+	return doHTTP[*Auth, *GetPolicyViolationsRsp](ctx, c.hc, call, req)
 }
 
 type ResolvePolicyViolationReq struct {
@@ -287,11 +280,10 @@ type ResolvePolicyViolationRsp struct {
 // This is required to avoid service suspension.
 // Refer to getPolicyViolations call for details.
 // todo: test
-func (c *Client) ResolvePolicyViolation(req *ResolvePolicyViolationReq) (*ResolvePolicyViolationRsp, error) {
+func (c *Client) ResolvePolicyViolation(ctx context.Context, req *ResolvePolicyViolationReq) (*ResolvePolicyViolationRsp, error) {
 	call := "/resolvePolicyViolation"
 	req.Auth = c.auth
-	rsp := &ResolvePolicyViolationRsp{}
-	return rsp, c.do(call, req, rsp)
+	return doHTTP[*ResolvePolicyViolationReq, *ResolvePolicyViolationRsp](ctx, c.hc, call, req)
 }
 
 type GetRateLimitStatusRsp struct {
@@ -303,11 +295,10 @@ type GetRateLimitStatusRsp struct {
 // GetRateLimitStatus When you perform too many API calls in a short amount of time,
 // KiwiVM API may start dropping your requests for a few minutes.
 // This call allows monitoring this matter.
-func (c *Client) GetRateLimitStatus() (*GetRateLimitStatusRsp, error) {
+func (c *Client) GetRateLimitStatus(ctx context.Context) (*GetRateLimitStatusRsp, error) {
 	call := "/getRateLimitStatus"
 	req := c.auth
-	rsp := &GetRateLimitStatusRsp{}
-	return rsp, c.do(call, req, rsp)
+	return doHTTP[*Auth, *GetRateLimitStatusRsp](ctx, c.hc, call, req)
 }
 
 type GetSSHKeysRsp struct {
@@ -329,9 +320,8 @@ type GetSSHKeysRsp struct {
 
 // GetSSHKeys Get SSH keys stored in Hypervisor Vault,
 // as well as the ones stored in Billing Portal.
-func (c *Client) GetSSHKeys() (*GetSSHKeysRsp, error) {
+func (c *Client) GetSSHKeys(ctx context.Context) (*GetSSHKeysRsp, error) {
 	call := "/getSshKeys"
 	req := c.auth
-	rsp := &GetSSHKeysRsp{}
-	return rsp, c.do(call, req, rsp)
+	return doHTTP[*Auth, *GetSSHKeysRsp](ctx, c.hc, call, req)
 }

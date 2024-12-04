@@ -1,5 +1,7 @@
 package kiwi
 
+import "context"
+
 type Backup struct {
 	Size      int    `json:"size"`
 	OS        string `json:"os"`
@@ -14,11 +16,10 @@ type BackupListRsp struct {
 }
 
 // BackupList Get list of automatic backups.
-func (c *Client) BackupList() (*BackupListRsp, error) {
+func (c *Client) BackupList(ctx context.Context) (*BackupListRsp, error) {
 	call := "/backup/list"
-	req := c.auth
-	rsp := &BackupListRsp{}
-	return rsp, c.do(call, req, rsp)
+	rsp, err := doHTTP[*Auth, *BackupListRsp](ctx, c.hc, call, c.auth)
+	return rsp, err
 }
 
 type BackupCopyToSnapshotReq struct {
@@ -33,9 +34,8 @@ type BackupCopyToSnapshotRsp struct {
 
 // BackupCopyToSnapshot Copies a backup identified by backup_token
 // (returned by backup/list) into a restorable Snapshot.
-func (c *Client) BackupCopyToSnapshot(req *BackupCopyToSnapshotReq) (*BackupCopyToSnapshotRsp, error) {
+func (c *Client) BackupCopyToSnapshot(ctx context.Context, req *BackupCopyToSnapshotReq) (*BackupCopyToSnapshotRsp, error) {
 	call := "/backup/copyToSnapshot"
 	req.Auth = c.auth
-	rsp := &BackupCopyToSnapshotRsp{}
-	return rsp, c.do(call, req, rsp)
+	return doHTTP[*BackupCopyToSnapshotReq, *BackupCopyToSnapshotRsp](ctx, c.hc, call, req)
 }

@@ -1,21 +1,17 @@
 linters:
   disable-all: true
   enable:
-    - deadcode
     - errcheck
     - gosimple
     - govet
     - ineffassign
     - staticcheck
-    - structcheck
     - typecheck
     - unused
-    - varcheck # default end
     - bodyclose
     - cyclop
     - errorlint
-    - exportloopref
-    - goerr113
+    - err113
     - makezero
     - unparam
     - durationcheck
@@ -24,7 +20,6 @@ linters:
     - noctx
     - prealloc
     - unparam
-    - exportloopref
     - rowserrcheck
     - nestif
 

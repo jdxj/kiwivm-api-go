@@ -1,12 +1,16 @@
 package kiwi
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"testing"
 )
 
-var cc = NewClient("", "", WithDebug(true))
+var (
+	cc  = NewClient("", "", WithDebug(true))
+	ctx = context.Background()
+)
 
 func TestEncode(t *testing.T) {
 	req := &Auth{
@@ -38,7 +42,7 @@ func TestEncode_SnapshotToggleStickyReq(t *testing.T) {
 
 func TestClient_GetServiceInfo(t *testing.T) {
 	c := NewClient("", "", WithDebug(true))
-	rsp, err := c.GetServiceInfo()
+	rsp, err := c.GetServiceInfo(ctx)
 	if err != nil {
 		t.Fatalf("%+v\n", err)
 	}
@@ -46,7 +50,7 @@ func TestClient_GetServiceInfo(t *testing.T) {
 }
 
 func TestClient_Start(t *testing.T) {
-	rsp, err := cc.Start()
+	rsp, err := cc.Start(ctx)
 	if err != nil {
 		t.Fatalf("%s\n", err)
 	}
@@ -54,7 +58,7 @@ func TestClient_Start(t *testing.T) {
 }
 
 func TestClient_Stop(t *testing.T) {
-	rsp, err := cc.Stop()
+	rsp, err := cc.Stop(ctx)
 	if err != nil {
 		t.Fatalf("%s\n", err)
 	}
@@ -62,7 +66,7 @@ func TestClient_Stop(t *testing.T) {
 }
 
 func TestClient_Restart(t *testing.T) {
-	rsp, err := cc.Restart()
+	rsp, err := cc.Restart(ctx)
 	if err != nil {
 		t.Fatalf("%s\n", err)
 	}
@@ -70,7 +74,7 @@ func TestClient_Restart(t *testing.T) {
 }
 
 func TestClient_GetLiveServiceInfo(t *testing.T) {
-	rsp, err := cc.GetLiveServiceInfo()
+	rsp, err := cc.GetLiveServiceInfo(ctx)
 	if err != nil {
 		t.Fatalf("%s\n", err)
 	}
@@ -78,7 +82,7 @@ func TestClient_GetLiveServiceInfo(t *testing.T) {
 }
 
 func TestClient_GetAvailableOS(t *testing.T) {
-	rsp, err := cc.GetAvailableOS()
+	rsp, err := cc.GetAvailableOS(ctx)
 	if err != nil {
 		t.Fatalf("%s\n", err)
 	}
@@ -86,7 +90,7 @@ func TestClient_GetAvailableOS(t *testing.T) {
 }
 
 func TestClient_GetRawUsageStats(t *testing.T) {
-	rsp, err := cc.GetRawUsageStats()
+	rsp, err := cc.GetRawUsageStats(ctx)
 	if err != nil {
 		t.Fatalf("%s\n", err)
 	}
@@ -94,7 +98,7 @@ func TestClient_GetRawUsageStats(t *testing.T) {
 }
 
 func TestClient_GetAuditLog(t *testing.T) {
-	rsp, err := cc.GetAuditLog()
+	rsp, err := cc.GetAuditLog(ctx)
 	if err != nil {
 		t.Fatalf("%s\n", err)
 	}
@@ -118,7 +122,7 @@ func TestJsonParseString(t *testing.T) {
 }
 
 func TestClient_SetHostname(t *testing.T) {
-	rsp, err := cc.SetHostname(&SetHostnameReq{
+	rsp, err := cc.SetHostname(ctx, &SetHostnameReq{
 		NewHostname: "jxdj-jp",
 	})
 	if err != nil {
@@ -128,7 +132,7 @@ func TestClient_SetHostname(t *testing.T) {
 }
 
 func TestClient_SetPTR(t *testing.T) {
-	rsp, err := cc.SetPTR(&SetPTRReq{
+	rsp, err := cc.SetPTR(ctx, &SetPTRReq{
 		IP:  "",
 		PTR: "",
 	})
@@ -139,7 +143,7 @@ func TestClient_SetPTR(t *testing.T) {
 }
 
 func TestClient_BasicShellCD(t *testing.T) {
-	rsp, err := cc.BasicShellCD(&BasicShellCDReq{
+	rsp, err := cc.BasicShellCD(ctx, &BasicShellCDReq{
 		CurrentDir: "/root",
 		NewDir:     "download",
 	})
@@ -150,7 +154,7 @@ func TestClient_BasicShellCD(t *testing.T) {
 }
 
 func TestClient_BasicShellExec(t *testing.T) {
-	rsp, err := cc.BasicShellExec(&BasicShellExecReq{
+	rsp, err := cc.BasicShellExec(ctx, &BasicShellExecReq{
 		Command: "ls",
 	})
 	if err != nil {
@@ -160,7 +164,7 @@ func TestClient_BasicShellExec(t *testing.T) {
 }
 
 func TestClient_ShellScriptExec(t *testing.T) {
-	rsp, err := cc.ShellScriptExec(&ShellScriptExecReq{
+	rsp, err := cc.ShellScriptExec(ctx, &ShellScriptExecReq{
 		Script: "ls",
 	})
 	if err != nil {
@@ -170,7 +174,7 @@ func TestClient_ShellScriptExec(t *testing.T) {
 }
 
 func TestClient_SnapshotCreate(t *testing.T) {
-	rsp, err := cc.SnapshotCreate(&SnapshotCreateReq{
+	rsp, err := cc.SnapshotCreate(ctx, &SnapshotCreateReq{
 		Description: "test sticky",
 	})
 	if err != nil {
@@ -180,7 +184,7 @@ func TestClient_SnapshotCreate(t *testing.T) {
 }
 
 func TestClient_SnapshotList(t *testing.T) {
-	rsp, err := cc.SnapshotList()
+	rsp, err := cc.SnapshotList(ctx)
 	if err != nil {
 		t.Fatalf("%s\n", err)
 	}
@@ -188,7 +192,7 @@ func TestClient_SnapshotList(t *testing.T) {
 }
 
 func TestClient_SnapshotDelete(t *testing.T) {
-	rsp, err := cc.SnapshotDelete(&SnapshotDeleteReq{
+	rsp, err := cc.SnapshotDelete(ctx, &SnapshotDeleteReq{
 		Snapshot: "snapshot-1670298-1640598255-2021-12-27-44b654ec70ebb997f3019903743f7d30363f2f51.tar.gz",
 	})
 	if err != nil {
@@ -198,7 +202,7 @@ func TestClient_SnapshotDelete(t *testing.T) {
 }
 
 func TestClient_SnapshotToggleSticky(t *testing.T) {
-	rsp, err := cc.SnapshotToggleSticky(&SnapshotToggleStickyReq{
+	rsp, err := cc.SnapshotToggleSticky(ctx, &SnapshotToggleStickyReq{
 		Snapshot: "snapshot-1670298-1641526373-2022-01-06-058c1a7336b49aa3b6ab94f49cdac42787abc15f.tar.gz",
 		Sticky:   RemoveSticky,
 	})
@@ -209,7 +213,7 @@ func TestClient_SnapshotToggleSticky(t *testing.T) {
 }
 
 func TestClient_SnapshotExport(t *testing.T) {
-	rsp, err := cc.SnapshotExport(&SnapshotExportReq{
+	rsp, err := cc.SnapshotExport(ctx, &SnapshotExportReq{
 		Snapshot: "snapshot-1670298-1640655921-2021-12-27-3af2c5902ed7f23ae32e6f1ff4cd71aa50e5919d.tar.gz",
 	})
 	if err != nil {
@@ -219,7 +223,7 @@ func TestClient_SnapshotExport(t *testing.T) {
 }
 
 func TestClient_BackupList(t *testing.T) {
-	rsp, err := cc.BackupList()
+	rsp, err := cc.BackupList(ctx)
 	if err != nil {
 		t.Fatalf("%s\n", err)
 	}
@@ -227,7 +231,7 @@ func TestClient_BackupList(t *testing.T) {
 }
 
 func TestClient_BackupCopyToSnapshot(t *testing.T) {
-	rsp, err := cc.BackupCopyToSnapshot(&BackupCopyToSnapshotReq{
+	rsp, err := cc.BackupCopyToSnapshot(ctx, &BackupCopyToSnapshotReq{
 		BackupToken: "52afc2c8204d2ea2f164a46c3bf06e6a6d05644e",
 	})
 	if err != nil {
@@ -237,7 +241,7 @@ func TestClient_BackupCopyToSnapshot(t *testing.T) {
 }
 
 func TestClient_MigrateGetLocations(t *testing.T) {
-	rsp, err := cc.MigrateGetLocations()
+	rsp, err := cc.MigrateGetLocations(ctx)
 	if err != nil {
 		t.Fatalf("%s\n", err)
 	}
@@ -245,7 +249,7 @@ func TestClient_MigrateGetLocations(t *testing.T) {
 }
 
 func TestClient_GetSuspensionDetails(t *testing.T) {
-	rsp, err := cc.GetSuspensionDetails()
+	rsp, err := cc.GetSuspensionDetails(ctx)
 	if err != nil {
 		t.Fatalf("%s\n", err)
 	}
@@ -253,7 +257,7 @@ func TestClient_GetSuspensionDetails(t *testing.T) {
 }
 
 func TestClient_GetPolicyViolations(t *testing.T) {
-	rsp, err := cc.GetPolicyViolations()
+	rsp, err := cc.GetPolicyViolations(ctx)
 	if err != nil {
 		t.Fatalf("%s\n", err)
 	}
@@ -261,7 +265,7 @@ func TestClient_GetPolicyViolations(t *testing.T) {
 }
 
 func TestClient_GetRateLimitStatus(t *testing.T) {
-	rsp, err := cc.GetRateLimitStatus()
+	rsp, err := cc.GetRateLimitStatus(ctx)
 	if err != nil {
 		t.Fatalf("%s\n", err)
 	}
@@ -269,7 +273,7 @@ func TestClient_GetRateLimitStatus(t *testing.T) {
 }
 
 func TestClient_PrivateIPGetAvailableIPs(t *testing.T) {
-	rsp, err := cc.PrivateIPGetAvailableIPs()
+	rsp, err := cc.PrivateIPGetAvailableIPs(ctx)
 	if err != nil {
 		t.Fatalf("%s\n", err)
 	}
@@ -277,7 +281,7 @@ func TestClient_PrivateIPGetAvailableIPs(t *testing.T) {
 }
 
 func TestClient_GetSSHKeys(t *testing.T) {
-	rsp, err := cc.GetSSHKeys()
+	rsp, err := cc.GetSSHKeys(ctx)
 	if err != nil {
 		t.Fatalf("%s\n", err)
 	}

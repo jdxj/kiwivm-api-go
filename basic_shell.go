@@ -1,5 +1,7 @@
 package kiwi
 
+import "context"
+
 type BasicShellCDReq struct {
 	*Auth
 	CurrentDir string `json:"currentDir"`
@@ -14,11 +16,10 @@ type BasicShellCDRsp struct {
 
 // BasicShellCD Simulate change of directory inside of the VPS.
 // Can be used to build a shell like Basic shell.
-func (c *Client) BasicShellCD(req *BasicShellCDReq) (*BasicShellCDRsp, error) {
+func (c *Client) BasicShellCD(ctx context.Context, req *BasicShellCDReq) (*BasicShellCDRsp, error) {
 	call := "/basicShell/cd"
 	req.Auth = c.auth
-	rsp := &BasicShellCDRsp{}
-	return rsp, c.do(call, req, rsp)
+	return doHTTP[*BasicShellCDReq, *BasicShellCDRsp](ctx, c.hc, call, req)
 }
 
 type BasicShellExecReq struct {
@@ -35,9 +36,8 @@ type BasicShellExecRsp struct {
 }
 
 // BasicShellExec Execute a shell command on the VPS (synchronously).
-func (c *Client) BasicShellExec(req *BasicShellExecReq) (*BasicShellExecRsp, error) {
+func (c *Client) BasicShellExec(ctx context.Context, req *BasicShellExecReq) (*BasicShellExecRsp, error) {
 	call := "/basicShell/exec"
 	req.Auth = c.auth
-	rsp := &BasicShellExecRsp{}
-	return rsp, c.do(call, req, rsp)
+	return doHTTP[*BasicShellExecReq, *BasicShellExecRsp](ctx, c.hc, call, req)
 }

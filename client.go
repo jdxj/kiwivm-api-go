@@ -2,13 +2,11 @@ package kiwi
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"net/http"
 	"net/url"
 	"reflect"
-	"time"
+
+	"github.com/go-resty/resty/v2"
 )
 
 const (
@@ -18,10 +16,14 @@ const (
 
 // Encode encodes the field into the form of key1=value1&key2=value2
 // according to the go struct tag.
-func Encode(i interface{}) string {
+func Encode(i any) string {
+	return EncodeValues(i).Encode()
+}
+
+func EncodeValues(i any) url.Values {
 	v := url.Values{}
 	encode(i, v)
-	return v.Encode()
+	return v
 }
 
 func encode(d interface{}, v url.Values) {
@@ -78,7 +80,7 @@ func NewClient(veID, apiKey string, optFunc ...OptFunc) *Client {
 			APIKey: apiKey,
 		},
 		option: o,
-		hc:     &http.Client{},
+		hc:     resty.New(),
 	}
 	return c
 }
@@ -87,7 +89,7 @@ type Client struct {
 	auth   *Auth
 	option *Option
 
-	hc *http.Client
+	hc *resty.Client
 }
 
 type Auth struct {
@@ -95,33 +97,14 @@ type Auth struct {
 	APIKey string `json:"api_key"`
 }
 
-func (c *Client) do(call string, req, rsp interface{}) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	api := host + version + call + "?" + Encode(req)
-
-	if c.option.debug {
-		fmt.Printf("debug api: %s\n", api)
-	}
-
-	hReq, _ := http.NewRequestWithContext(ctx, http.MethodGet, api, nil)
-	hRsp, err := c.hc.Do(hReq)
-	if err != nil {
-		return err
-	}
-	defer hRsp.Body.Close()
-
-	d, err := ioutil.ReadAll(hRsp.Body)
-	if err != nil {
-		return err
-	}
-
-	if c.option.debug {
-		fmt.Printf("debug body: %s\n", d)
-	}
-
-	return json.Unmarshal(d, rsp)
+func doHTTP[R, S any](ctx context.Context, client *resty.Client, path string, req R) (rsp S, err error) {
+	api := host + version + path
+	hRsp, err := client.R().
+		SetContext(ctx).
+		SetQueryParamsFromValues(EncodeValues(req)).
+		SetResult(rsp).
+		Get(api)
+	return hRsp.Result().(S), err
 }
 
 type Status struct {
@@ -136,11 +119,10 @@ type StartRsp struct {
 }
 
 // Start the VPS
-func (c *Client) Start() (*StartRsp, error) {
+func (c *Client) Start(ctx context.Context) (*StartRsp, error) {
 	call := "/start"
 	req := c.auth
-	rsp := &StartRsp{}
-	return rsp, c.do(call, req, rsp)
+	return doHTTP[*Auth, *StartRsp](ctx, c.hc, call, req)
 }
 
 type StopRsp struct {
@@ -148,11 +130,10 @@ type StopRsp struct {
 }
 
 // Stop the VPS
-func (c *Client) Stop() (*StopRsp, error) {
+func (c *Client) Stop(ctx context.Context) (*StopRsp, error) {
 	call := "/stop"
 	req := c.auth
-	rsp := &StopRsp{}
-	return rsp, c.do(call, req, rsp)
+	return doHTTP[*Auth, *StopRsp](ctx, c.hc, call, req)
 }
 
 type RestartRsp struct {
@@ -160,11 +141,10 @@ type RestartRsp struct {
 }
 
 // Restart Reboots the VPS
-func (c *Client) Restart() (*RestartRsp, error) {
+func (c *Client) Restart(ctx context.Context) (*RestartRsp, error) {
 	call := "/restart"
 	req := c.auth
-	rsp := &RestartRsp{}
-	return rsp, c.do(call, req, rsp)
+	return doHTTP[*Auth, *RestartRsp](ctx, c.hc, call, req)
 }
 
 type KillRsp struct {
@@ -174,11 +154,10 @@ type KillRsp struct {
 // Kill Allows to forcibly stop a VPS that is stuck and cannot be stopped by normal means.
 // Please use this feature with great care as any unsaved data will be lost.
 // todo: test
-func (c *Client) Kill() (*KillRsp, error) {
+func (c *Client) Kill(ctx context.Context) (*KillRsp, error) {
 	call := "/kill"
 	req := c.auth
-	rsp := &KillRsp{}
-	return rsp, c.do(call, req, rsp)
+	return doHTTP[*Auth, *KillRsp](ctx, c.hc, call, req)
 }
 
 type ReinstallOSReq struct {
@@ -194,11 +173,10 @@ type ReinstallOSRsp struct {
 // OS must be specified via "os" variable.
 // Use getAvailableOS call to get list of available systems.
 // todo: test
-func (c *Client) ReinstallOS(req *ReinstallOSReq) (*ReinstallOSRsp, error) {
+func (c *Client) ReinstallOS(ctx context.Context, req *ReinstallOSReq) (*ReinstallOSRsp, error) {
 	call := "/reinstallOS"
 	req.Auth = c.auth
-	rsp := &ReinstallOSRsp{}
-	return rsp, c.do(call, req, rsp)
+	return doHTTP[*ReinstallOSReq, *ReinstallOSRsp](ctx, c.hc, call, req)
 }
 
 type ResetRootPasswordRsp struct {
@@ -207,9 +185,8 @@ type ResetRootPasswordRsp struct {
 
 // ResetRootPassword Generates and sets a new root password.
 // todo: test
-func (c *Client) ResetRootPassword() (*ResetRootPasswordRsp, error) {
+func (c *Client) ResetRootPassword(ctx context.Context) (*ResetRootPasswordRsp, error) {
 	call := "/resetRootPassword"
 	req := c.auth
-	rsp := &ResetRootPasswordRsp{}
-	return rsp, c.do(call, req, rsp)
+	return doHTTP[*Auth, *ResetRootPasswordRsp](ctx, c.hc, call, req)
 }

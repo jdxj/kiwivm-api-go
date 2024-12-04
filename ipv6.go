@@ -1,5 +1,7 @@
 package kiwi
 
+import "context"
+
 type IPV6AddReq struct {
 	*Auth
 	IP string `json:"ip"`
@@ -15,11 +17,10 @@ type IPV6AddRsp struct {
 // All subsequent requested IPv6 addresses must be within the /64 subnet of the
 // first IPv6 address.
 // todo: test
-func (c *Client) IPV6Add(req *IPV6AddReq) (*IPV6AddRsp, error) {
+func (c *Client) IPV6Add(ctx context.Context, req *IPV6AddReq) (*IPV6AddRsp, error) {
 	call := "/ipv6/add"
 	req.Auth = c.auth
-	rsp := &IPV6AddRsp{}
-	return rsp, c.do(call, req, rsp)
+	return doHTTP[*IPV6AddReq, *IPV6AddRsp](ctx, c.hc, call, req)
 }
 
 type IPV6DeleteReq struct {
@@ -33,9 +34,8 @@ type IPV6DeleteRsp struct {
 
 // IPV6Delete Releases specified IPv6 address.
 // todo: test
-func (c *Client) IPV6Delete(req *IPV6DeleteReq) (*IPV6DeleteRsp, error) {
+func (c *Client) IPV6Delete(ctx context.Context, req *IPV6DeleteReq) (*IPV6DeleteRsp, error) {
 	call := "/ipv6/delete"
 	req.Auth = c.auth
-	rsp := &IPV6DeleteRsp{}
-	return rsp, c.do(call, req, rsp)
+	return doHTTP[*IPV6DeleteReq, *IPV6DeleteRsp](ctx, c.hc, call, req)
 }

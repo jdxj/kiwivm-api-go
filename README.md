@@ -1,4 +1,4 @@
-# KiwiVM-SDK-Go
+# KiwiVM-API-Go
 
 This repository encapsulates [kiwi api](https://kiwivm.64clouds.com/) with
 go http client, which can be used to automate some tasks.
@@ -10,7 +10,7 @@ Note: This is not an official repository.
 ## Usage
 
 ```shell
-$ go get -u github.com/jdxj/kiwivm-sdk-go@v0.1.0
+$ go get -u github.com/jdxj/kiwivm-api-go@v0.2.0
 ```
 
 [examples](./examples)
@@ -19,17 +19,18 @@ $ go get -u github.com/jdxj/kiwivm-sdk-go@v0.1.0
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"time"
 
-	sdk "github.com/jdxj/kiwivm-sdk-go"
-	"github.com/jdxj/kiwivm-sdk-go/conf"
+	kiwi "github.com/jdxj/kiwivm-api-go"
 )
 
 func main() {
-	client := sdk.NewClient(conf.VeID, conf.APIKey)
-	stats, err := client.GetRawUsageStats()
+	ctx := context.Background()
+	client := kiwi.NewClient("your veid", "your api-key")
+	stats, err := client.GetRawUsageStats(ctx)
 	if err != nil {
 		log.Fatalln(err)
 	}
