@@ -25,7 +25,7 @@ type MigrateGetLocationsRsp struct {
 func (c *Client) MigrateGetLocations(ctx context.Context) (*MigrateGetLocationsRsp, error) {
 	call := "/migrate/getLocations"
 	req := c.auth
-	return doHTTP[*Auth, *MigrateGetLocationsRsp](ctx, c.hc, call, req)
+	return doHTTP[*Auth, *MigrateGetLocationsRsp](ctx, c, call, req)
 }
 
 type MigrateStartReq struct {
@@ -44,7 +44,7 @@ type MigrateStartRsp struct{}
 func (c *Client) MigrateStart(ctx context.Context, req *MigrateStartReq) (*MigrateStartRsp, error) {
 	call := "/migrate/start"
 	req.Auth = c.auth
-	return doHTTP[*MigrateStartReq, *MigrateStartRsp](ctx, c.hc, call, req)
+	return doHTTP[*MigrateStartReq, *MigrateStartRsp](ctx, c, call, req)
 }
 
 type CloneFromExternalServerReq struct {
@@ -62,5 +62,5 @@ type CloneFromExternalServerRsp struct{}
 func (c *Client) CloneFromExternalServer(ctx context.Context, req *CloneFromExternalServerReq) (*CloneFromExternalServerRsp, error) {
 	call := "/cloneFromExternalServer"
 	req.Auth = c.auth
-	return doHTTP[*CloneFromExternalServerReq, *CloneFromExternalServerRsp](ctx, c.hc, call, req)
+	return doHTTP[*CloneFromExternalServerReq, *CloneFromExternalServerRsp](ctx, c, call, req)
 }

@@ -15,7 +15,7 @@ type ISOMountRsp struct{}
 func (c *Client) ISOMount(ctx context.Context, req *ISOMountReq) (*ISOMountRsp, error) {
 	call := "/iso/mount"
 	req.Auth = c.auth
-	return doHTTP[*ISOMountReq, *ISOMountRsp](ctx, c.hc, call, req)
+	return doHTTP[*ISOMountReq, *ISOMountRsp](ctx, c, call, req)
 }
 
 type ISOUnmountRsp struct{}
@@ -26,5 +26,5 @@ type ISOUnmountRsp struct{}
 func (c *Client) ISOUnmount(ctx context.Context) (*ISOUnmountRsp, error) {
 	call := "/iso/unmount"
 	req := c.auth
-	return doHTTP[*Auth, *ISOUnmountRsp](ctx, c.hc, call, req)
+	return doHTTP[*Auth, *ISOUnmountRsp](ctx, c, call, req)
 }

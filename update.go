@@ -16,5 +16,5 @@ type UpdateSSHKeysRsp struct{}
 func (c *Client) UpdateSSHKeys(ctx context.Context, req *UpdateSSHKeysReq) (*UpdateSSHKeysRsp, error) {
 	call := "/updateSshKeys"
 	req.Auth = c.auth
-	return doHTTP[*UpdateSSHKeysReq, *UpdateSSHKeysRsp](ctx, c.hc, call, req)
+	return doHTTP[*UpdateSSHKeysReq, *UpdateSSHKeysRsp](ctx, c, call, req)
 }

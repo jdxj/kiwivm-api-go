@@ -20,7 +20,7 @@ type IPV6AddRsp struct {
 func (c *Client) IPV6Add(ctx context.Context, req *IPV6AddReq) (*IPV6AddRsp, error) {
 	call := "/ipv6/add"
 	req.Auth = c.auth
-	return doHTTP[*IPV6AddReq, *IPV6AddRsp](ctx, c.hc, call, req)
+	return doHTTP[*IPV6AddReq, *IPV6AddRsp](ctx, c, call, req)
 }
 
 type IPV6DeleteReq struct {
@@ -37,5 +37,5 @@ type IPV6DeleteRsp struct {
 func (c *Client) IPV6Delete(ctx context.Context, req *IPV6DeleteReq) (*IPV6DeleteRsp, error) {
 	call := "/ipv6/delete"
 	req.Auth = c.auth
-	return doHTTP[*IPV6DeleteReq, *IPV6DeleteRsp](ctx, c.hc, call, req)
+	return doHTTP[*IPV6DeleteReq, *IPV6DeleteRsp](ctx, c, call, req)
 }

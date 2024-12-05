@@ -2,6 +2,7 @@ package kiwi
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/url"
 	"reflect"
@@ -57,7 +58,8 @@ func encode(d interface{}, v url.Values) {
 }
 
 type Option struct {
-	debug bool
+	debug  bool
+	logger resty.Logger
 }
 
 type OptFunc func(*Option)
@@ -65,6 +67,12 @@ type OptFunc func(*Option)
 func WithDebug(debug bool) OptFunc {
 	return func(o *Option) {
 		o.debug = debug
+	}
+}
+
+func WithLogger(logger resty.Logger) OptFunc {
+	return func(o *Option) {
+		o.logger = logger
 	}
 }
 
@@ -97,14 +105,19 @@ type Auth struct {
 	APIKey string `json:"api_key"`
 }
 
-func doHTTP[R, S any](ctx context.Context, client *resty.Client, path string, req R) (rsp S, err error) {
+func doHTTP[R, S any](ctx context.Context, client *Client, path string, req R) (rsp S, err error) {
 	api := host + version + path
-	hRsp, err := client.R().
+	hs, err := client.hc.R().
+		SetDebug(client.option.debug).
 		SetContext(ctx).
 		SetQueryParamsFromValues(EncodeValues(req)).
-		SetResult(rsp).
 		Get(api)
-	return hRsp.Result().(S), err
+	if err != nil {
+		return
+	}
+	// rsp 的 Content-Type 是 text，所以这里手动解析 body
+	err = json.Unmarshal(hs.Body(), &rsp)
+	return
 }
 
 type Status struct {
@@ -122,7 +135,7 @@ type StartRsp struct {
 func (c *Client) Start(ctx context.Context) (*StartRsp, error) {
 	call := "/start"
 	req := c.auth
-	return doHTTP[*Auth, *StartRsp](ctx, c.hc, call, req)
+	return doHTTP[*Auth, *StartRsp](ctx, c, call, req)
 }
 
 type StopRsp struct {
@@ -133,7 +146,7 @@ type StopRsp struct {
 func (c *Client) Stop(ctx context.Context) (*StopRsp, error) {
 	call := "/stop"
 	req := c.auth
-	return doHTTP[*Auth, *StopRsp](ctx, c.hc, call, req)
+	return doHTTP[*Auth, *StopRsp](ctx, c, call, req)
 }
 
 type RestartRsp struct {
@@ -144,7 +157,7 @@ type RestartRsp struct {
 func (c *Client) Restart(ctx context.Context) (*RestartRsp, error) {
 	call := "/restart"
 	req := c.auth
-	return doHTTP[*Auth, *RestartRsp](ctx, c.hc, call, req)
+	return doHTTP[*Auth, *RestartRsp](ctx, c, call, req)
 }
 
 type KillRsp struct {
@@ -157,7 +170,7 @@ type KillRsp struct {
 func (c *Client) Kill(ctx context.Context) (*KillRsp, error) {
 	call := "/kill"
 	req := c.auth
-	return doHTTP[*Auth, *KillRsp](ctx, c.hc, call, req)
+	return doHTTP[*Auth, *KillRsp](ctx, c, call, req)
 }
 
 type ReinstallOSReq struct {
@@ -176,7 +189,7 @@ type ReinstallOSRsp struct {
 func (c *Client) ReinstallOS(ctx context.Context, req *ReinstallOSReq) (*ReinstallOSRsp, error) {
 	call := "/reinstallOS"
 	req.Auth = c.auth
-	return doHTTP[*ReinstallOSReq, *ReinstallOSRsp](ctx, c.hc, call, req)
+	return doHTTP[*ReinstallOSReq, *ReinstallOSRsp](ctx, c, call, req)
 }
 
 type ResetRootPasswordRsp struct {
@@ -188,5 +201,5 @@ type ResetRootPasswordRsp struct {
 func (c *Client) ResetRootPassword(ctx context.Context) (*ResetRootPasswordRsp, error) {
 	call := "/resetRootPassword"
 	req := c.auth
-	return doHTTP[*Auth, *ResetRootPasswordRsp](ctx, c.hc, call, req)
+	return doHTTP[*Auth, *ResetRootPasswordRsp](ctx, c, call, req)
 }

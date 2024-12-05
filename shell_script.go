@@ -19,5 +19,5 @@ type ShellScriptExecRsp struct {
 func (c *Client) ShellScriptExec(ctx context.Context, req *ShellScriptExecReq) (*ShellScriptExecRsp, error) {
 	call := "/shellScript/exec"
 	req.Auth = c.auth
-	return doHTTP[*ShellScriptExecReq, *ShellScriptExecRsp](ctx, c.hc, call, req)
+	return doHTTP[*ShellScriptExecReq, *ShellScriptExecRsp](ctx, c, call, req)
 }

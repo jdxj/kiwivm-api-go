@@ -15,7 +15,7 @@ type SetHostnameRsp struct {
 func (c *Client) SetHostname(ctx context.Context, req *SetHostnameReq) (*SetHostnameRsp, error) {
 	call := "/setHostname"
 	req.Auth = c.auth
-	return doHTTP[*SetHostnameReq, *SetHostnameRsp](ctx, c.hc, call, req)
+	return doHTTP[*SetHostnameReq, *SetHostnameRsp](ctx, c, call, req)
 }
 
 type SetPTRReq struct {
@@ -32,5 +32,5 @@ type SetPTRRsp struct {
 func (c *Client) SetPTR(ctx context.Context, req *SetPTRReq) (*SetPTRRsp, error) {
 	call := "/setPTR"
 	req.Auth = c.auth
-	return doHTTP[*SetPTRReq, *SetPTRRsp](ctx, c.hc, call, req)
+	return doHTTP[*SetPTRReq, *SetPTRRsp](ctx, c, call, req)
 }

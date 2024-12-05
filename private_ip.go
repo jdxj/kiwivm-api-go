@@ -11,7 +11,7 @@ type PrivateIPGetAvailableIPsRsp struct {
 func (c *Client) PrivateIPGetAvailableIPs(ctx context.Context) (*PrivateIPGetAvailableIPsRsp, error) {
 	call := "/privateIp/getAvailableIps"
 	req := c.auth
-	return doHTTP[*Auth, *PrivateIPGetAvailableIPsRsp](ctx, c.hc, call, req)
+	return doHTTP[*Auth, *PrivateIPGetAvailableIPsRsp](ctx, c, call, req)
 }
 
 type PrivateIpAssignReq struct {
@@ -30,7 +30,7 @@ type PrivateIpAssignRsp struct {
 func (c *Client) PrivateIpAssign(ctx context.Context, req *PrivateIpAssignReq) (*PrivateIpAssignRsp, error) {
 	call := "/privateIp/assign"
 	req.Auth = c.auth
-	return doHTTP[*PrivateIpAssignReq, *PrivateIpAssignRsp](ctx, c.hc, call, req)
+	return doHTTP[*PrivateIpAssignReq, *PrivateIpAssignRsp](ctx, c, call, req)
 }
 
 type PrivateIpDeleteReq struct {
@@ -47,5 +47,5 @@ type PrivateIpDeleteRsp struct {
 func (c *Client) PrivateIpDelete(ctx context.Context, req *PrivateIpDeleteReq) (*PrivateIpDeleteRsp, error) {
 	call := "/privateIp/delete"
 	req.Auth = c.auth
-	return doHTTP[*PrivateIpDeleteReq, *PrivateIpDeleteRsp](ctx, c.hc, call, req)
+	return doHTTP[*PrivateIpDeleteReq, *PrivateIpDeleteRsp](ctx, c, call, req)
 }

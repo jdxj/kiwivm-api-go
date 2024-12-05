@@ -4,13 +4,28 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"os"
 	"testing"
 )
 
 var (
-	cc  = NewClient("", "", WithDebug(true))
+	cc  *Client
 	ctx = context.Background()
 )
+
+func TestMain(t *testing.M) {
+	veid := os.Getenv("KIWI_VEID")
+	if veid == "" {
+		panic("veid is empty")
+	}
+	key := os.Getenv("KIWI_KEY")
+	if key == "" {
+		panic("key is empty")
+	}
+
+	cc = NewClient(veid, key, WithDebug(false))
+	os.Exit(t.Run())
+}
 
 func TestEncode(t *testing.T) {
 	req := &Auth{
@@ -41,8 +56,7 @@ func TestEncode_SnapshotToggleStickyReq(t *testing.T) {
 }
 
 func TestClient_GetServiceInfo(t *testing.T) {
-	c := NewClient("", "", WithDebug(true))
-	rsp, err := c.GetServiceInfo(ctx)
+	rsp, err := cc.GetServiceInfo(ctx)
 	if err != nil {
 		t.Fatalf("%+v\n", err)
 	}
@@ -94,7 +108,14 @@ func TestClient_GetRawUsageStats(t *testing.T) {
 	if err != nil {
 		t.Fatalf("%s\n", err)
 	}
-	fmt.Printf("%+v\n", rsp)
+	fmt.Printf("status: %+v\n", rsp.Status)
+	fmt.Printf("vmType: %s\n", rsp.VmType)
+	if len(rsp.Data) <= 0 {
+		return
+	}
+	fmt.Printf("first: %s, %+v\n", rsp.Data[0].Datetime(), rsp.Data[0])
+	last := rsp.Data[len(rsp.Data)-1]
+	fmt.Printf("last: %s, %+v\n", last.Datetime(), last)
 }
 
 func TestClient_GetAuditLog(t *testing.T) {

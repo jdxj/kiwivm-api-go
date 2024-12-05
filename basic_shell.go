@@ -19,7 +19,7 @@ type BasicShellCDRsp struct {
 func (c *Client) BasicShellCD(ctx context.Context, req *BasicShellCDReq) (*BasicShellCDRsp, error) {
 	call := "/basicShell/cd"
 	req.Auth = c.auth
-	return doHTTP[*BasicShellCDReq, *BasicShellCDRsp](ctx, c.hc, call, req)
+	return doHTTP[*BasicShellCDReq, *BasicShellCDRsp](ctx, c, call, req)
 }
 
 type BasicShellExecReq struct {
@@ -39,5 +39,5 @@ type BasicShellExecRsp struct {
 func (c *Client) BasicShellExec(ctx context.Context, req *BasicShellExecReq) (*BasicShellExecRsp, error) {
 	call := "/basicShell/exec"
 	req.Auth = c.auth
-	return doHTTP[*BasicShellExecReq, *BasicShellExecRsp](ctx, c.hc, call, req)
+	return doHTTP[*BasicShellExecReq, *BasicShellExecRsp](ctx, c, call, req)
 }

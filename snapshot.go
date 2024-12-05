@@ -21,7 +21,7 @@ type SnapshotCreateRsp struct {
 func (c *Client) SnapshotCreate(ctx context.Context, req *SnapshotCreateReq) (*SnapshotCreateRsp, error) {
 	call := "/snapshot/create"
 	req.Auth = c.auth
-	return doHTTP[*SnapshotCreateReq, *SnapshotCreateRsp](ctx, c.hc, call, req)
+	return doHTTP[*SnapshotCreateReq, *SnapshotCreateRsp](ctx, c, call, req)
 }
 
 type Snapshot struct {
@@ -46,7 +46,7 @@ type SnapshotListRsp struct {
 func (c *Client) SnapshotList(ctx context.Context) (*SnapshotListRsp, error) {
 	call := "/snapshot/list"
 	req := c.auth
-	return doHTTP[*Auth, *SnapshotListRsp](ctx, c.hc, call, req)
+	return doHTTP[*Auth, *SnapshotListRsp](ctx, c, call, req)
 }
 
 type SnapshotDeleteReq struct {
@@ -63,7 +63,7 @@ type SnapshotDeleteRsp struct {
 func (c *Client) SnapshotDelete(ctx context.Context, req *SnapshotDeleteReq) (*SnapshotDeleteRsp, error) {
 	call := "/snapshot/delete"
 	req.Auth = c.auth
-	return doHTTP[*SnapshotDeleteReq, *SnapshotDeleteRsp](ctx, c.hc, call, req)
+	return doHTTP[*SnapshotDeleteReq, *SnapshotDeleteRsp](ctx, c, call, req)
 }
 
 type SnapshotRestoreReq struct {
@@ -81,7 +81,7 @@ type SnapshotRestoreRsp struct {
 func (c *Client) SnapshotRestore(ctx context.Context, req *SnapshotRestoreReq) (*SnapshotRestoreRsp, error) {
 	call := "/snapshot/restore"
 	req.Auth = c.auth
-	return doHTTP[*SnapshotRestoreReq, *SnapshotRestoreRsp](ctx, c.hc, call, req)
+	return doHTTP[*SnapshotRestoreReq, *SnapshotRestoreRsp](ctx, c, call, req)
 }
 
 const (
@@ -107,7 +107,7 @@ type SnapshotToggleStickyRsp struct {
 func (c *Client) SnapshotToggleSticky(ctx context.Context, req *SnapshotToggleStickyReq) (*SnapshotToggleStickyRsp, error) {
 	call := "/snapshot/toggleSticky"
 	req.Auth = c.auth
-	return doHTTP[*SnapshotToggleStickyReq, *SnapshotToggleStickyRsp](ctx, c.hc, call, req)
+	return doHTTP[*SnapshotToggleStickyReq, *SnapshotToggleStickyRsp](ctx, c, call, req)
 }
 
 type SnapshotExportReq struct {
@@ -124,7 +124,7 @@ type SnapshotExportRsp struct {
 func (c *Client) SnapshotExport(ctx context.Context, req *SnapshotExportReq) (*SnapshotExportRsp, error) {
 	call := "/snapshot/export"
 	req.Auth = c.auth
-	return doHTTP[*SnapshotExportReq, *SnapshotExportRsp](ctx, c.hc, call, req)
+	return doHTTP[*SnapshotExportReq, *SnapshotExportRsp](ctx, c, call, req)
 }
 
 type SnapshotImportReq struct {
@@ -143,5 +143,5 @@ type SnapshotImportRsp struct {
 func (c *Client) SnapshotImport(ctx context.Context, req *SnapshotImportReq) (*SnapshotImportRsp, error) {
 	call := "/snapshot/import"
 	req.Auth = c.auth
-	return doHTTP[*SnapshotImportReq, *SnapshotImportRsp](ctx, c.hc, call, req)
+	return doHTTP[*SnapshotImportReq, *SnapshotImportRsp](ctx, c, call, req)
 }

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"net"
 	"strconv"
+	"time"
 )
 
 type GetServiceInfoRsp struct {
@@ -84,7 +85,7 @@ type GetServiceInfoRsp struct {
 func (c *Client) GetServiceInfo(ctx context.Context) (*GetServiceInfoRsp, error) {
 	call := "/getServiceInfo"
 	req := c.auth
-	return doHTTP[*Auth, *GetServiceInfoRsp](ctx, c.hc, call, req)
+	return doHTTP[*Auth, *GetServiceInfoRsp](ctx, c, call, req)
 }
 
 type GetLiveServiceInfoRsp struct {
@@ -140,7 +141,7 @@ type GetLiveServiceInfoRsp struct {
 func (c *Client) GetLiveServiceInfo(ctx context.Context) (*GetLiveServiceInfoRsp, error) {
 	call := "/getLiveServiceInfo"
 	req := c.auth
-	return doHTTP[*Auth, *GetLiveServiceInfoRsp](ctx, c.hc, call, req)
+	return doHTTP[*Auth, *GetLiveServiceInfoRsp](ctx, c, call, req)
 }
 
 type GetAvailableOSRsp struct {
@@ -154,16 +155,28 @@ type GetAvailableOSRsp struct {
 func (c *Client) GetAvailableOS(ctx context.Context) (*GetAvailableOSRsp, error) {
 	call := "/getAvailableOS"
 	req := c.auth
-	return doHTTP[*Auth, *GetAvailableOSRsp](ctx, c.hc, call, req)
+	return doHTTP[*Auth, *GetAvailableOSRsp](ctx, c, call, req)
 }
 
 type RawUsage struct {
-	Timestamp       int64 `json:"timestamp,string"`
-	NetworkInBytes  int64 `json:"network_in_bytes,string"`
-	NetworkOutBytes int64 `json:"network_out_bytes,string"`
-	DiskReadBytes   int64 `json:"disk_read_bytes,string"`
-	DiskWriteBytes  int64 `json:"disk_write_bytes,string"`
-	CpuUsage        int64 `json:"cpu_usage,string"`
+	Timestamp       int64 `json:"timestamp"`
+	NetworkInBytes  int64 `json:"network_in_bytes"`
+	NetworkOutBytes int64 `json:"network_out_bytes"`
+	DiskReadBytes   int64 `json:"disk_read_bytes"`
+	DiskWriteBytes  int64 `json:"disk_write_bytes"`
+	CpuUsage        int64 `json:"cpu_usage"`
+}
+
+func (ru RawUsage) Datetime() string {
+	return time.Unix(ru.Timestamp, 0).Format(time.DateTime)
+}
+
+func (ru RawUsage) NetworkInMegabytes() float64 {
+	return float64(ru.NetworkInBytes) / 1000 / 1000
+}
+
+func (ru RawUsage) NetworkOutMegabytes() float64 {
+	return float64(ru.NetworkOutBytes) / 1000 / 1000
 }
 
 type GetRawUsageStatsRsp struct {
@@ -177,7 +190,7 @@ type GetRawUsageStatsRsp struct {
 func (c *Client) GetRawUsageStats(ctx context.Context) (*GetRawUsageStatsRsp, error) {
 	call := "/getRawUsageStats"
 	req := c.auth
-	return doHTTP[*Auth, *GetRawUsageStatsRsp](ctx, c.hc, call, req)
+	return doHTTP[*Auth, *GetRawUsageStatsRsp](ctx, c, call, req)
 }
 
 type AuditLog struct {
@@ -219,7 +232,7 @@ type GetAuditLogRsp struct {
 func (c *Client) GetAuditLog(ctx context.Context) (*GetAuditLogRsp, error) {
 	call := "/getAuditLog"
 	req := c.auth
-	return doHTTP[*Auth, *GetAuditLogRsp](ctx, c.hc, call, req)
+	return doHTTP[*Auth, *GetAuditLogRsp](ctx, c, call, req)
 }
 
 type GetSuspensionDetailsRsp struct {
@@ -233,7 +246,7 @@ type GetSuspensionDetailsRsp struct {
 func (c *Client) GetSuspensionDetails(ctx context.Context) (*GetSuspensionDetailsRsp, error) {
 	call := "/getSuspensionDetails"
 	req := c.auth
-	return doHTTP[*Auth, *GetSuspensionDetailsRsp](ctx, c.hc, call, req)
+	return doHTTP[*Auth, *GetSuspensionDetailsRsp](ctx, c, call, req)
 }
 
 type UnsuspendReq struct {
@@ -251,7 +264,7 @@ type UnsuspendRsp struct {
 func (c *Client) Unsuspend(ctx context.Context, req *UnsuspendReq) (*UnsuspendRsp, error) {
 	call := "/unsuspend"
 	req.Auth = c.auth
-	return doHTTP[*UnsuspendReq, *UnsuspendRsp](ctx, c.hc, call, req)
+	return doHTTP[*UnsuspendReq, *UnsuspendRsp](ctx, c, call, req)
 }
 
 type GetPolicyViolationsRsp struct {
@@ -264,7 +277,7 @@ type GetPolicyViolationsRsp struct {
 func (c *Client) GetPolicyViolations(ctx context.Context) (*GetPolicyViolationsRsp, error) {
 	call := "/getPolicyViolations"
 	req := c.auth
-	return doHTTP[*Auth, *GetPolicyViolationsRsp](ctx, c.hc, call, req)
+	return doHTTP[*Auth, *GetPolicyViolationsRsp](ctx, c, call, req)
 }
 
 type ResolvePolicyViolationReq struct {
@@ -283,7 +296,7 @@ type ResolvePolicyViolationRsp struct {
 func (c *Client) ResolvePolicyViolation(ctx context.Context, req *ResolvePolicyViolationReq) (*ResolvePolicyViolationRsp, error) {
 	call := "/resolvePolicyViolation"
 	req.Auth = c.auth
-	return doHTTP[*ResolvePolicyViolationReq, *ResolvePolicyViolationRsp](ctx, c.hc, call, req)
+	return doHTTP[*ResolvePolicyViolationReq, *ResolvePolicyViolationRsp](ctx, c, call, req)
 }
 
 type GetRateLimitStatusRsp struct {
@@ -298,7 +311,7 @@ type GetRateLimitStatusRsp struct {
 func (c *Client) GetRateLimitStatus(ctx context.Context) (*GetRateLimitStatusRsp, error) {
 	call := "/getRateLimitStatus"
 	req := c.auth
-	return doHTTP[*Auth, *GetRateLimitStatusRsp](ctx, c.hc, call, req)
+	return doHTTP[*Auth, *GetRateLimitStatusRsp](ctx, c, call, req)
 }
 
 type GetSSHKeysRsp struct {
@@ -323,5 +336,5 @@ type GetSSHKeysRsp struct {
 func (c *Client) GetSSHKeys(ctx context.Context) (*GetSSHKeysRsp, error) {
 	call := "/getSshKeys"
 	req := c.auth
-	return doHTTP[*Auth, *GetSSHKeysRsp](ctx, c.hc, call, req)
+	return doHTTP[*Auth, *GetSSHKeysRsp](ctx, c, call, req)
 }

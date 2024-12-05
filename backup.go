@@ -18,7 +18,7 @@ type BackupListRsp struct {
 // BackupList Get list of automatic backups.
 func (c *Client) BackupList(ctx context.Context) (*BackupListRsp, error) {
 	call := "/backup/list"
-	rsp, err := doHTTP[*Auth, *BackupListRsp](ctx, c.hc, call, c.auth)
+	rsp, err := doHTTP[*Auth, *BackupListRsp](ctx, c, call, c.auth)
 	return rsp, err
 }
 
@@ -37,5 +37,5 @@ type BackupCopyToSnapshotRsp struct {
 func (c *Client) BackupCopyToSnapshot(ctx context.Context, req *BackupCopyToSnapshotReq) (*BackupCopyToSnapshotRsp, error) {
 	call := "/backup/copyToSnapshot"
 	req.Auth = c.auth
-	return doHTTP[*BackupCopyToSnapshotReq, *BackupCopyToSnapshotRsp](ctx, c.hc, call, req)
+	return doHTTP[*BackupCopyToSnapshotReq, *BackupCopyToSnapshotRsp](ctx, c, call, req)
 }
