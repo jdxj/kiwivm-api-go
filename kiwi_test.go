@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"testing"
+	"time"
 )
 
 var (
@@ -110,12 +111,21 @@ func TestClient_GetRawUsageStats(t *testing.T) {
 	}
 	fmt.Printf("status: %+v\n", rsp.Status)
 	fmt.Printf("vmType: %s\n", rsp.VmType)
-	if len(rsp.Data) <= 0 {
-		return
+	fmt.Printf("total: %d\n", len(rsp.Data))
+
+	for i, i2 := 0, len(rsp.Data)-1; i < 10; i++ {
+		fmt.Printf("%+v\n", rsp.Data[i2-i])
 	}
-	fmt.Printf("first: %s, %+v\n", rsp.Data[0].Datetime(), rsp.Data[0])
-	last := rsp.Data[len(rsp.Data)-1]
-	fmt.Printf("last: %s, %+v\n", last.Datetime(), last)
+}
+
+func TestTraffic(t *testing.T) {
+	stats, err := cc.GetRawUsageStats(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	beginUnix := time.Date(2024, 12, 5, 0, 0, 0, 0, time.Local).Unix()
+	res := stats.Traffic(beginUnix, 0)
+	fmt.Println(res)
 }
 
 func TestClient_GetAuditLog(t *testing.T) {
