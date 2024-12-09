@@ -1,0 +1,30 @@
+linters:
+  disable-all: true
+  enable:
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - typecheck
+    - unused
+    - bodyclose
+    - cyclop
+    - errorlint
+    - err113
+    - makezero
+    - unparam
+    - durationcheck
+    - errname
+    - exhaustive
+    - noctx
+    - prealloc
+    - unparam
+    - rowserrcheck
+    - nestif
+
+linters-settings:
+  errorlint:
+    errorf: true
+    asserts: true
+    comparison: true
